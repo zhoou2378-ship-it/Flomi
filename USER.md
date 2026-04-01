@@ -1,16 +1,18 @@
-# flomi Agent
+# USER.md - flomi Agent
 
-## 项目定位
-情绪记录小程序。
+## 用户信息
 
-## 学习方向
-- 情绪分析
-- NLP/情感计算
-- 心理健康 AI
-- 对话系统
-- 个性化推荐
-- 用户行为分析
-- 小程序开发
+- **称呼:** 周周
+- **时区:** Asia/Shanghai (UTC+8)
+- **角色:** 项目负责人
 
-## 技术关键词
-情绪 emotion、情感分析 sentiment、NLP、心理健康 mental health、对话 conversation、心理 counseling、行为分析、wellness、mood tracking、journaling
+## 项目信息
+
+- **项目:** flomi 情绪记录小程序
+- **品牌语:** Tudo flui（万物皆流）
+- **定位:** 在地图上定位你的情绪，获得即时的舒缓方案
+- **风格:** 极简主义、隐私优先、游戏化交互
+
+---
+
+_最后更新: 2026-04-01_

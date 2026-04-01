@@ -23,3 +23,28 @@
 - 每次收到学习材料，认真阅读并提取关键信息
 - 将有价值的内容记录到 MEMORY.md
 - 主动思考如何应用到项目中
+
+## 小程序预览
+
+当用户要求预览小程序页面时：
+
+1. **不要使用 frontend-design skill** — 它是用于艺术设计，不是小程序预览
+2. **正确方法**：
+   - 读取小程序项目目录下的页面文件 (WXML/WXSS)
+   - 使用 canvas 工具生成预览
+   - 或直接生成 HTML 预览文件
+
+### 预览命令示例
+
+```bash
+# 查看页面文件
+ls miniprogram/pages/
+
+# 读取页面内容
+cat miniprogram/pages/index/index.wxml
+cat miniprogram/pages/index/index.wxss
+```
+
+### 生成预览
+
+使用 canvas 工具或直接输出 HTML 文件让用户在浏览器中查看。

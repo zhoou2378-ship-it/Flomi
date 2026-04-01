@@ -1,40 +1,21 @@
-# TOOLS.md - Local Notes
+# TOOLS.md - flomi 工具配置
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+## 小程序预览
 
-## What Goes Here
+当用户要求预览小程序页面时：
+- 读取 `miniprogram/pages/` 下的 WXML/WXSS 文件
+- 使用 canvas 工具生成预览
+- 不使用 frontend-design skill（那是用于艺术设计的）
 
-Things like:
+## 项目路径
 
-- Camera names and locations
-- SSH hosts and aliases
-- Preferred voices for TTS
-- Speaker/room names
-- Device nicknames
-- Anything environment-specific
+- 小程序代码: `~/.qclaw/workspace/flomi-mood-app/`
+- Workspace: `~/.qclaw/workspace-flomi/`
 
-## Examples
+## 技能
 
-```markdown
-### Cameras
-
-- living-room → Main area, 180° wide angle
-- front-door → Entrance, motion-triggered
-
-### SSH
-
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-
-- Preferred voice: "Nova" (warm, slightly British)
-- Default speaker: Kitchen HomePod
-```
-
-## Why Separate?
-
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
+- `skills/miniprogram-preview/` — 小程序预览工具
 
 ---
 
-Add whatever helps you do your job. This is your cheat sheet.
+_最后更新: 2026-04-01_
