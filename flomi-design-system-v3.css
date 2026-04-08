@@ -1,0 +1,441 @@
+/* Flomi Design System v3 - 专业级小程序设计规范
+ * 整合 Apple iOS HIG + Material Design 3 + Arco Design 最佳实践
+ * 设计师：Vin · 2026-04-08
+ * 
+ * 设计理念：轻盈灵动 + 糖果色 + 渐变琉璃
+ * 适用于：微信小程序 / iOS / Android
+ */
+
+/* ==================== 1. 色彩系统 ==================== */
+/* 参考：Apple 语义色 + M3 角色色 + Arco 调色板 */
+
+/* --- 主品牌色（轻盈灵动版）--- */
+--flomi-primary:       #E8B4CB;  /* 浅樱粉 - 主操作、选中态 */
+--flomi-primary-light: #F5D4E3;  /* 浅樱粉亮 */
+--flomi-primary-dark:  #D9A3B8;  /* 浅樱粉暗 */
+--flomi-on-primary:   #FFFFFF;  /* 主色上的文字 */
+
+/* --- 辅助色 --- */
+--flomi-secondary:     #B5D8EB; /* 薄荷蓝 - 次要操作、辅助强调 */
+--flomi-secondary-light:#D4EEF5;
+--flomi-secondary-dark: #8FC5DA;
+--flomi-on-secondary:  #3A5A6B;
+
+/* --- 点缀色（糖果感）--- */
+--flomi-tertiary:      #F5E6A3; /* 奶油黄 - 强调、徽标 */
+--flomi-tertiary-light:#FBF3CC;
+--flomi-tertiary-dark: #E5D18A;
+
+/* --- 功能色（参考 Arco 标准）--- */
+--flomi-success:       #00B42A; /* Arco 绿 */
+--flomi-warning:       #FF7D00; /* Arco 橙 */
+--flomi-error:         #F53F3F; /* Arco 红 */
+--flomi-info:          #165DFF; /* Arco 蓝（稳重场景用）*/
+
+/* --- 中性色（参考 Apple + Arco）--- */
+/* Apple 风格的语义灰 + 温暖的底色 */
+--flomi-white:         #FFFFFF;
+--flomi-bg-primary:    #FFF5F8; /* 暖调极浅粉 - 页面背景 */
+--flomi-bg-secondary: #FFF0F3; /* 更深的背景 */
+--flomi-bg-tertiary:  #FCE8EC; /* 卡片悬停态 */
+
+/* 文字层级（参考 Apple SF Pro 语义色）*/
+--flomi-text-primary:   #1C1C1E;  /* iOS label - 主要内容 */
+--flomi-text-secondary: #6B5B5B; /* iOS secondaryLabel - 次要信息 */
+--flomi-text-tertiary:  #AEAEB2; /* iOS tertiaryLabel - 占位符 */
+--flomi-text-disabled: #C7C7CC; /* iOS disabledText */
+
+/* 边框与分割 */
+--flomi-border:        #E5E5EA; /* iOS separator */
+--flomi-divider:       #F0E8ED; /* 更弱的分割线 */
+
+/* ==================== 2. 排版系统 ==================== */
+/* 参考：Apple SF Pro + Arco 字号 + 微信小程序安全区域 */
+
+/* 基础字号（微信 750rpx 适配）*/
+--flomi-font-xs:   20rpx;   /* 10px - 徽标、标签 */
+--flomi-font-sm:   24rpx;   /* 12px - 辅助说明 */
+--flomi-font-base: 28rpx;   /* 14px - 正文 */
+--flomi-font-md:   32rpx;   /* 16px - 副标题 */
+--flomi-font-lg:   36rpx;   /* 18px - 标题 */
+--flomi-font-xl:   44rpx;   /* 22px - 大标题 */
+--flomi-font-xxl:  56rpx;   /* 28px - 页面标题 */
+
+/* 字重（参考 iOS）*/
+--flomi-font-weight-regular: 400;
+--flomi-font-weight-medium:   500; /* iOS medium */
+--flomi-font-weight-semibold: 600; /* iOS semibold */
+--flomi-font-weight-bold:     700;
+
+/* 行高（参考 M3 + iOS）*/
+--flomi-line-height-tight:  1.2;   /* 标题 */
+--flomi-line-height-base:   1.5;   /* 正文 */
+--flomi-line-height-relaxed: 1.75; /* 描述 */
+
+/* ==================== 3. 间距系统 ==================== */
+/* 参考：Arco 4px 基础网格 + iOS 8pt 规范 */
+
+/* 基础单位 */
+--flomi-space-unit: 4rpx;   /* 2px - 最小颗粒 */
+
+/* 常用间距 */
+--flomi-space-1:  4rpx;   /* 2px */
+--flomi-space-2:  8rpx;   /* 4px */
+--flomi-space-3:  12rpx;  /* 6px */
+--flomi-space-4:  16rpx;  /* 8px - 组件内间距 */
+--flomi-space-5:  20rpx;  /* 10px */
+--flomi-space-6:  24rpx;  /* 12px - 组件间距 */
+--flomi-space-8:  32rpx;  /* 16px */
+--flomi-space-10: 40rpx;  /* 20px */
+--flomi-space-12: 48rpx;  /* 24px */
+--flomi-space-16: 64rpx;  /* 32px - 区块间距 */
+
+/* 安全的页面边距（考虑全面屏）*/
+--flomi-safe-area-top:    env(safe-area-inset-top);
+--flomi-safe-area-bottom: env(safe-area-inset-bottom);
+--flomi-page-padding:     24rpx;
+--flomi-content-max-width: 720rpx;
+
+/* ==================== 4. 圆角系统 ==================== */
+/* 参考：iOS Safari (10-22px) + M3 (small/medium/large) + Arco */
+
+--flomi-radius-none:   0;
+--flomi-radius-sm:     8rpx;    /* 4px - 小元素、标签 */
+--flomi-radius-md:     12rpx;   /* 6px - 输入框、按钮 */
+--flomi-radius-lg:     16rpx;   /* 8px - 卡片 */
+--flomi-radius-xl:     24rpx;   /* 12px - 大卡片、弹窗 */
+--flomi-radius-full:   9999rpx; /* 圆形 */
+
+/* 组件圆角规范 */
+--flomi-radius-button:  var(--flomi-radius-md);
+--flomi-radius-card:   var(--flomi-radius-lg);
+--flomi-radius-input:  var(--flomi-radius-sm);
+--flomi-radius-avatar: var(--flomi-radius-full);
+--flomi-radius-tag:    var(--flomi-radius-sm);
+
+/* ==================== 5. 阴影系统 ==================== */
+/* 参考：M3 Elevation + Arco Shadow + iOS 柔和阴影 */
+
+/* 层级阴影 */
+--flomi-shadow-none:    none;
+--flomi-shadow-xs:      0 1rpx 2rpx rgba(0,0,0,0.04);         /* 轻微 */
+--flomi-shadow-sm:     0 2rpx 4rpx rgba(0,0,0,0.06);         /* 按钮、标签 */
+--flomi-shadow-md:     0 4rpx 12rpx rgba(0,0,0,0.08);        /* 卡片 */
+--flomi-shadow-lg:     0 8rpx 24rpx rgba(0,0,0,0.12);       /* 弹窗、下拉 */
+--flomi-shadow-xl:     0 16rpx 48rpx rgba(0,0,0,0.16);       /* 模态框 */
+
+/* 品牌阴影（带色调）*/
+--flomi-shadow-primary: 0 4rpx 20rpx rgba(232,180,203,0.25);
+--flomi-shadow-glow:    0 0 40rpx rgba(232,180,203,0.4);   /* 发光效果 */
+
+/* ==================== 6. 动画系统 ==================== */
+/* 参考：iOS Spring + M3 Motion */
+
+/* 时长（参考 M3）*/
+--flomi-duration-instant:   0ms;
+--flomi-duration-fast:      150ms;   /* 按钮反馈 */
+--flomi-duration-normal:    300ms;   /* 标准过渡 */
+--flomi-duration-slow:      500ms;   /* 页面切换 */
+--flomi-duration-slower:    700ms;
+
+/* 缓动函数（参考 iOS Spring）*/
+--flomi-ease-default:     cubic-bezier(0.4, 0, 0.2, 1);
+--flomi-ease-in:          cubic-bezier(0.4, 0, 1, 1);
+--flomi-ease-out:         cubic-bezier(0, 0, 0.2, 1);
+--flomi-ease-elastic:     cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 弹性 */
+--flomi-ease-bounce:      cubic-bezier(0.68, -0.55, 0.265, 1.55);   /* 弹跳 */
+
+/* 常用动画 */
+--flomi-transition-fast:    all var(--flomi-duration-fast) var(--flomi-ease-default);
+--flomi-transition-normal: all var(--flomi-duration-normal) var(--flomi-ease-default);
+--flomi-transition-elastic: all var(--flomi-duration-normal) var(--flomi-ease-elastic);
+
+/* ==================== 7. 组件规范 ==================== */
+
+/* --- 按钮 --- */
+.flomi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;           /* 40px - iOS 标准按钮高度 */
+  padding: 0 32rpx;
+  border-radius: var(--flomi-radius-md);
+  font-size: var(--flomi-font-base);
+  font-weight: var(--flomi-font-weight-medium);
+  transition: var(--flomi-transition-fast);
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* 主按钮 - 渐变填充 */
+.flomi-btn-primary {
+  background: linear-gradient(135deg, var(--flomi-primary) 0%, var(--flomi-primary-dark) 100%);
+  color: var(--flomi-on-primary);
+  box-shadow: var(--flomi-shadow-sm);
+}
+.flomi-btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: var(--flomi-shadow-primary);
+}
+
+/* 次按钮 - 描边 */
+.flomi-btn-secondary {
+  background: transparent;
+  color: var(--flomi-primary);
+  border: 2rpx solid var(--flomi-primary);
+}
+
+/* 文字按钮 */
+.flomi-btn-text {
+  background: transparent;
+  color: var(--flomi-primary);
+  padding: 0 16rpx;
+}
+
+/* 禁用状态 */
+.flomi-btn-disabled {
+  background: var(--flomi-border);
+  color: var(--flomi-text-disabled);
+  cursor: not-allowed;
+}
+
+/* --- 卡片 --- */
+.flomi-card {
+  background: var(--flomi-white);
+  border-radius: var(--flomi-radius-lg);
+  box-shadow: var(--flomi-shadow-md);
+  padding: 24rpx;
+  transition: var(--flomi-transition-normal);
+}
+
+/* 悬停效果（小程序用 press 替代 hover）*/
+.flomi-card:active {
+  transform: scale(0.99);
+  box-shadow: var(--flomi-shadow-sm);
+}
+
+/* 玻璃拟态卡片 */
+.flomi-card-glass {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(255,255,255,0.5);
+  box-shadow: var(--flomi-shadow-md);
+}
+
+/* --- 输入框 --- */
+.flomi-input {
+  height: 80rpx;
+  padding: 0 24rpx;
+  background: var(--flomi-white);
+  border: 2rpx solid var(--flomi-border);
+  border-radius: var(--flomi-radius-sm);
+  font-size: var(--flomi-font-base);
+  color: var(--flomi-text-primary);
+  outline: none;
+  transition: var(--flomi-transition-fast);
+}
+.flomi-input:focus {
+  border-color: var(--flomi-primary);
+  box-shadow: 0 0 0 4rpx rgba(232,180,203,0.2);
+}
+.flomi-input::placeholder {
+  color: var(--flomi-text-tertiary);
+}
+
+/* --- 标签/徽标 --- */
+.flomi-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: var(--flomi-radius-sm);
+  font-size: var(--flomi-font-xs);
+  font-weight: var(--flomi-font-weight-medium);
+}
+
+/* 浅色标签 */
+.flomi-tag-light {
+  background: rgba(232,180,203,0.15);
+  color: var(--flomi-primary);
+}
+
+/* 强调标签 */
+.flomi-tag-accent {
+  background: var(--flomi-tertiary);
+  color: var(--flomi-text-primary);
+}
+
+/* --- 头像 --- */
+.flomi-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: var(--flomi-radius-full);
+  object-fit: cover;
+}
+.flomi-avatar-sm { width: 56rpx; height: 56rpx; }
+.flomi-avatar-lg { width: 112rpx; height: 112rpx; }
+
+/* --- 底部导航 --- */
+.flomi-tabbar {
+  display: flex;
+  height: 100rpx;          /* 50px + 安全区 */
+  background: var(--flomi-white);
+  border-top: 1rpx solid var(--flomi-border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.flomi-tabbar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.flomi-tabbar-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.flomi-tabbar-text {
+  font-size: var(--flomi-font-xs);
+  color: var(--flomi-text-tertiary);
+}
+
+.flomi-tabbar-item-active .flomi-tabbar-text {
+  color: var(--flomi-primary);
+  font-weight: var(--flomi-font-weight-medium);
+}
+
+/* --- 列表项 --- */
+.flomi-list-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: var(--flomi-white);
+  border-bottom: 1rpx solid var(--flomi-divider);
+}
+.flomi-list-item:last-child {
+  border-bottom: none;
+}
+.flomi-list-item:active {
+  background: var(--flomi-bg-tertiary);
+}
+
+/* ==================== 8. 情绪色卡（专业版） ==================== */
+/* 参考 M3 语义色 + 用户偏好 */
+
+.flomi-emotion {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  border-radius: var(--flomi-radius-full);
+  font-size: var(--flomi-font-sm);
+}
+
+/* 平静 - 薄荷绿 */
+.flomi-emotion-calm {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+.flomi-emotion-calm-glow {
+  box-shadow: 0 0 20rpx rgba(76,175,80,0.3);
+}
+
+/* 愉悦 - 奶油黄 */
+.flomi-emotion-happy {
+  background: #FFF8E1;
+  color: #F57F17;
+}
+.flomi-emotion-happy-glow {
+  box-shadow: 0 0 20rpx rgba(255,193,7,0.3);
+}
+
+/* 温暖 - 浅樱粉 */
+.flomi-emotion-warm {
+  background: #FCE4EC;
+  color: #C2185B;
+}
+.flomi-emotion-warm-glow {
+  box-shadow: 0 0 20rpx rgba(233,30,99,0.3);
+}
+
+/* 焦虑 - 干燥玫瑰 */
+.flomi-emotion-anxious {
+  background: #EFEBE9;
+  color: #5D4037;
+}
+.flomi-emotion-anxious-glow {
+  box-shadow: 0 0 20rpx rgba(121,85,72,0.3);
+}
+
+/* 悲伤 - 薰衣草紫 */
+.flomi-emotion-sad {
+  background: #EDE7F6;
+  color: #512DA8;
+}
+.flomi-emotion-sad-glow {
+  box-shadow: 0 0 20rpx rgba(103,58,183,0.3);
+}
+
+/* ==================== 9. 渐变系统 ==================== */
+/* 参考：M3 动态色 + 渐变琉璃 */
+
+/* 品牌渐变 */
+--flomi-gradient-primary: linear-gradient(135deg, var(--flomi-primary) 0%, var(--flomi-secondary) 100%);
+--flomi-gradient-warm:   linear-gradient(135deg, var(--flomi-primary) 0%, var(--flomi-tertiary) 100%);
+--flomi-gradient-cool:  linear-gradient(135deg, var(--flomi-secondary) 0%, #C5C5E8 100%);
+
+/* 情绪径向渐变（发光效果）*/
+--flomi-glow-calm:   radial-gradient(circle, rgba(76,175,80,0.2) 0%, transparent 70%);
+--flomi-glow-happy:  radial-gradient(circle, rgba(255,193,7,0.2) 0%, transparent 70%);
+--flomi-glow-warm:   radial-gradient(circle, rgba(233,30,99,0.2) 0%, transparent 70%);
+--flomi-glow-anxious:radial-gradient(circle, rgba(121,85,72,0.2) 0%, transparent 70%);
+--flomi-glow-sad:    radial-gradient(circle, rgba(103,58,183,0.2) 0%, transparent 70%);
+
+/* 玻璃拟态渐变 */
+--flomi-glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,245,248,0.6) 100%);
+
+/* ==================== 10. 图标规范 ==================== */
+/* 参考：SF Symbols + Arco Icon */
+
+.flomi-icon {
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+}
+.flomi-icon-sm { width: 32rpx; height: 32rpx; }
+.flomi-icon-lg { width: 64rpx; height: 64rpx; }
+.flomi-icon-xl { width: 96rpx; height: 96rpx; }
+
+/* ==================== 11. 可访问性 ==================== */
+/* 参考：WCAG 2.1 + iOS Accessibility */
+
+:root {
+  /* 对比度检查（至少 4.5:1）*/
+  /* 主色 #E8B4CB 在白色背景上对比度约 2.5:1，不够 */
+  /* 改用深色版本确保可访问性 */
+  --flomi-primary-accessible: #D9A3B8; /* 深一点的粉色 */
+}
+
+/* 专注模式 */
+@media (prefers-contrast: more) {
+  :root {
+    --flomi-border: #C7C7CC;
+    --flomi-text-secondary: #48484A;
+  }
+}
+
+/* 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --flomi-duration-fast: 0ms;
+    --flomi-duration-normal: 0ms;
+    --flomi-transition-fast: none;
+    --flomi-transition-normal: none;
+  }
+}

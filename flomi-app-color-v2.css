@@ -1,0 +1,198 @@
+/* flomi-app-color-v2.css
+ * Flomi 輕盈靈動版 · 頁面顏色適配規範 v2
+ * 設計師：Vin · 日期：2026-04-08
+ * 
+ * 設計理念：輕盈靈動、糖果感、漸變琉璃
+ * 使用方式：複製全部內容到 app.wxss 第一行
+ */
+
+/* ==================== 品牌基礎色 ==================== */
+page {
+  /* 主色系 - 輕盈柔和的粉 */
+  --flomi-primary:   #E8B4CB;   /* 淺櫻粉 - 主按鈕、選中態、高亮 */
+  --flomi-secondary: #B5D8EB;   /* 薄荷藍 - 輔助強調、新鮮感 */
+  --flomi-accent:   #F5E6A3;   /* 奶油黃 - 點綴、糖果感 */
+
+  /* 背景色 */
+  --flomi-bg:       #FFF5F8;   /* 極淺粉白 - 全局頁面背景 */
+  --flomi-bg-card:  #FFFFFF;   /* 純白 - 卡片、彈窗背景 */
+  --flomi-bg-vip:   #FDF0F5;   /* VIP/會員專屬背景 */
+
+  /* 文字色 */
+  --flomi-text:     #6B5B5B;   /* 暖灰紫 - 正文 */
+  --flomi-text-light:#9C8A8A;  /* 淺灰紫 - 次要文字 */
+  --flomi-text-muted:#C9BFCF; /* 淡紫灰 - 占位符、禁用態 */
+
+  /* 邊框/分割 */
+  --flomi-border:   #F0E8ED;   /* 暖紫灰邊框 */
+
+  /* ==================== 情緒色卡（輕盈靈動版） ==================== */
+  /* 平静 */
+  --flomi-emotion-calm:     #C5E8D5;
+  --flomi-emotion-calm-text:#4A6B52;
+
+  /* 愉悅 */
+  --flomi-emotion-happy:   #F5E6A3;
+  --flomi-emotion-happy-text:#7A6B45;
+
+  /* 溫暖 */
+  --flomi-emotion-warm:    #E8B4CB;
+  --flomi-emotion-warm-text:#FFFFFF;
+
+  /* 焦慮 */
+  --flomi-emotion-anxious: #D4B5A0;
+  --flomi-emotion-anxious-text:#6B5B52;
+
+  /* 悲傷 */
+  --flomi-emotion-sad:     #C5C5E8;
+  --flomi-emotion-sad-text:#52526B;
+
+  /* ==================== 漸變效果 ==================== */
+  --flomi-gradient-start: #E8B4CB;  /* 櫻粉 */
+  --flomi-gradient-end:   #B5D8EB;  /* 薄荷藍 */
+  
+  /* 情緒徑向漸變 */
+  --flomi-glow-calm:   radial-gradient(circle, rgba(197,232,213,0.8) 0%, rgba(197,232,213,0) 70%);
+  --flomi-glow-happy:  radial-gradient(circle, rgba(245,230,163,0.8) 0%, rgba(245,230,163,0) 70%);
+  --flomi-glow-warm:   radial-gradient(circle, rgba(232,180,203,0.8) 0%, rgba(232,180,203,0) 70%);
+  --flomi-glow-anxious:radial-gradient(circle, rgba(212,181,160,0.8) 0%, rgba(212,181,160,0) 70%);
+  --flomi-glow-sad:     radial-gradient(circle, rgba(197,197,232,0.8) 0%, rgba(197,197,232,0) 70%);
+
+  /* ==================== 狀態色 ==================== */
+  --flomi-success:  #C5E8D5;   /* 薄荷綠 - 成功 */
+  --flomi-warning:  #F5E6A3;   /* 奶油黃 - 警告 */
+  --flomi-error:    #E8B4CB;   /* 淺櫻粉 - 錯誤 */
+  --flomi-loading:  #B5D8EB;   /* 薄荷藍 - 載入中 */
+  
+  /* ==================== 特殊效果 ==================== */
+  --flomi-shadow-soft:  0 4rpx 20rpx rgba(232, 180, 203, 0.12);
+  --flomi-shadow-hover: 0 8rpx 30rpx rgba(232, 180, 203, 0.25);
+  --flomi-shine:       linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+}
+
+
+/* ==================== 組件樣式（直接使用） ==================== */
+
+/* 頁面根元素 */
+page {
+  background-color: var(--flomi-bg);
+  color: var(--flomi-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+/* 主按鈕 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--flomi-primary) 0%, #D9A3B8 100%);
+  color: #FFFFFF;
+  border-radius: 24rpx;
+  border: none;
+  font-size: 28rpx;
+  padding: 20rpx 48rpx;
+  box-shadow: var(--flomi-shadow-soft);
+}
+.btn-primary:active {
+  box-shadow: var(--flomi-shadow-hover);
+  transform: translateY(2rpx);
+}
+
+/* 次按鈕（描邊） */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--flomi-primary);
+  border: 2rpx solid var(--flomi-primary);
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  padding: 18rpx 48rpx;
+}
+
+/* 文字按鈕 */
+.btn-text {
+  background-color: transparent;
+  color: var(--flomi-text);
+  border: none;
+  font-size: 28rpx;
+  padding: 8rpx 16rpx;
+}
+
+/* 禁用按鈕 */
+.btn-disabled {
+  background-color: var(--flomi-border);
+  color: var(--flomi-text-muted);
+  border-radius: 24rpx;
+  border: none;
+  font-size: 28rpx;
+  padding: 20rpx 48rpx;
+}
+
+/* 卡片 */
+.card {
+  background-color: var(--flomi-bg-card);
+  border-radius: 24rpx;
+  box-shadow: var(--flomi-shadow-soft);
+  padding: 32rpx;
+  margin: 24rpx;
+  position: relative;
+  overflow: hidden;
+}
+/* 卡片高光效果 */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* 情緒氣泡 */
+.emotion-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  border-radius: 100rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  position: relative;
+}
+.emotion-tag.calm     { background: var(--flomi-emotion-calm);    color: var(--flomi-emotion-calm-text); }
+.emotion-tag.happy    { background: var(--flomi-emotion-happy);  color: var(--flomi-emotion-happy-text); }
+.emotion-tag.warm     { background: var(--flomi-emotion-warm);   color: var(--flomi-emotion-warm-text); }
+.emotion-tag.anxious  { background: var(--flomi-emotion-anxious); color: var(--flomi-emotion-anxious-text); }
+.emotion-tag.sad      { background: var(--flomi-emotion-sad);    color: var(--flomi-emotion-sad-text); }
+
+/* 情緒氣泡 + 徑向漸變光暈 */
+.emotion-glow {
+  position: relative;
+}
+.emotion-glow.calm::after    { content: ''; position: absolute; inset: -20rpx; border-radius: 50%; background: var(--flomi-glow-calm); z-index: -1; }
+.emotion-glow.happy::after   { content: ''; position: absolute; inset: -20rpx; border-radius: 50%; background: var(--flomi-glow-happy); z-index: -1; }
+.emotion-glow.warm::after    { content: ''; position: absolute; inset: -20rpx; border-radius: 50%; background: var(--flomi-glow-warm); z-index: -1; }
+.emotion-glow.anxious::after { content: ''; position: absolute; inset: -20rpx; border-radius: 50%; background: var(--flomi-glow-anxious); z-index: -1; }
+.emotion-glow.sad::after     { content: ''; position: absolute; inset: -20rpx; border-radius: 50%; background: var(--flomi-glow-sad); z-index: -1; }
+
+/* 標籤/徽標 */
+.tag {
+  display: inline-block;
+  background: rgba(232, 180, 203, 0.15);
+  color: var(--flomi-primary);
+  border-radius: 8rpx;
+  padding: 6rpx 14rpx;
+  font-size: 22rpx;
+}
+
+/* 漸變背景區塊 */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--flomi-gradient-start) 0%, var(--flomi-gradient-end) 100%);
+  border-radius: 24rpx;
+}
+
+/* 玻璃擬態效果 */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border-radius: 24rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+}

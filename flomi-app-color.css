@@ -1,0 +1,148 @@
+/* flomi-app-color.css
+ * Flomi 情绪小程序 · 页面颜色适配规范
+ * 设计师：Vin · 日期：2026-04-08
+ * 
+ * 使用方式：复制全部内容到 app.wxss 第一行
+ */
+
+/* ==================== 品牌基础色 ==================== */
+page {
+  /* 主色系 */
+  --flomi-primary:   #FFB5A7;   /* 桃粉色 - 主按钮、选中态、高亮 */
+  --flomi-secondary: #FEC89A;   /* 暖杏色 - 辅助强调、焦虑情绪 */
+  --flomi-accent:    #FFDAB9;   /* 浅桃色 - 徽标、角标、愉悦情绪 */
+
+  /* 背景色 */
+  --flomi-bg:        #FFF8F5;   /* 暖白 - 全局页面背景 */
+  --flomi-bg-card:   #FFFFFF;   /* 纯白 - 卡片、弹窗背景 */
+
+  /* 文字色 */
+  --flomi-text:      #5C4A3D;   /* 暖灰棕 - 正文 */
+  --flomi-text-light:#9C8A7D;   /* 浅灰棕 - 次要文字 */
+  --flomi-text-muted:#C4B5AB;   /* 淡灰棕 - 占位符、禁用态 */
+
+  /* 边框/分割 */
+  --flomi-border:    #F0E6E0;   /* 暖灰边框 */
+
+  /* ==================== 情绪色卡（五阶） ==================== */
+  /* 平静疗愈 */
+  --flomi-emotion-calm:   #B5EAD7;
+  --flomi-emotion-calm-text: #5C4A3D;
+
+  /* 愉悦开心 */
+  --flomi-emotion-happy:  #FFDAB9;
+  --flomi-emotion-happy-text: #5C4A3D;
+
+  /* 温暖满足 */
+  --flomi-emotion-warm:   #FFB5A7;
+  --flomi-emotion-warm-text: #FFFFFF;
+
+  /* 焦虑紧张 */
+  --flomi-emotion-anxious:#FEC89A;
+  --flomi-emotion-anxious-text: #5C4A3D;
+
+  /* 悲伤低落 */
+  --flomi-emotion-sad:    #C7CEEA;
+  --flomi-emotion-sad-text: #4A4A4A;
+
+  /* ==================== 状态色 ==================== */
+  --flomi-success:  #B5EAD7;   /* 成功 */
+  --flomi-warning:  #FEC89A;   /* 警告 */
+  --flomi-error:    #FFB5A7;  /* 错误 */
+  --flomi-loading:  #FFDAB9;   /* 加载中 */
+}
+
+
+/* ==================== 组件样式（直接使用） ==================== */
+
+/* 页面根元素 */
+page {
+  background-color: var(--flomi-bg);
+  color: var(--flomi-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+/* 主按钮 */
+.btn-primary {
+  background-color: var(--flomi-primary);
+  color: #FFFFFF;
+  border-radius: 24rpx;
+  border: none;
+  font-size: 28rpx;
+  padding: 20rpx 48rpx;
+}
+.btn-primary:active {
+  opacity: 0.85;
+}
+
+/* 次按钮（描边） */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--flomi-primary);
+  border: 2rpx solid var(--flomi-primary);
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  padding: 18rpx 48rpx;
+}
+
+/* 文字按钮 */
+.btn-text {
+  background-color: transparent;
+  color: var(--flomi-text);
+  border: none;
+  font-size: 28rpx;
+  padding: 8rpx 16rpx;
+}
+
+/* 禁用按钮 */
+.btn-disabled {
+  background-color: var(--flomi-border);
+  color: var(--flomi-text-muted);
+  border-radius: 24rpx;
+  border: none;
+  font-size: 28rpx;
+  padding: 20rpx 48rpx;
+}
+
+/* 卡片 */
+.card {
+  background-color: var(--flomi-bg-card);
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 181, 167, 0.08);
+  padding: 32rpx;
+  margin: 24rpx;
+}
+
+/* 情绪气泡（通用） */
+.emotion-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: 100rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+/* 情绪气泡 - 平静 */
+.emotion-tag.calm    { background: var(--flomi-emotion-calm);   color: var(--flomi-emotion-calm-text); }
+/* 情绪气泡 - 愉悦 */
+.emotion-tag.happy   { background: var(--flomi-emotion-happy);  color: var(--flomi-emotion-happy-text); }
+/* 情绪气泡 - 温暖 */
+.emotion-tag.warm    { background: var(--flomi-emotion-warm);   color: var(--flomi-emotion-warm-text); }
+/* 情绪气泡 - 焦虑 */
+.emotion-tag.anxious { background: var(--flomi-emotion-anxious); color: var(--flomi-emotion-anxious-text); }
+/* 情绪气泡 - 悲伤 */
+.emotion-tag.sad     { background: var(--flomi-emotion-sad);    color: var(--flomi-emotion-sad-text); }
+
+/* 标签/徽标 */
+.tag {
+  display: inline-block;
+  background: rgba(255, 181, 167, 0.12);
+  color: var(--flomi-primary);
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  font-size: 22rpx;
+}
+
+/* TabBar 图标（选中态用主色） */
+/* 代可行：请在 app.json tabBar 配置中使用 flomi/tabbar-icon */
