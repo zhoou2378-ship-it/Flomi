@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Flomi 流光游标预览</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #E8E8E8 0%, #d8d8d8 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 40px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    h1 { font-size: 22px; font-weight: 500; color: #333; letter-spacing: 1px; }
+    .subtitle { font-size: 14px; color: #888; margin-top: -30px; }
+    .preview-card {
+      width: 400px;
+      height: 300px;
+      background: #E8E8E8;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .mood-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 60% 55%, rgba(0, 184, 148, 0.5) 0%, rgba(0, 184, 148, 0.2) 20%, transparent 40%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* 游标容器 */
+    .cursor-wrapper {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      left: 60%;
+      top: 55%;
+    }
+    /* 呼吸光晕 */
+    .cursor-breathe-ring {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.06) 40%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: breatheRing 3s ease-in-out infinite;
+    }
+    @keyframes breatheRing {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.4; }
+    }
+    /* 主光球 */
+    .cursor-sphere {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.7) 25%, rgba(255, 255, 255, 0.3) 60%, rgba(255, 255, 255, 0.05) 100%);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 0 40px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.6);
+      animation: spherePulse 2.5s ease-in-out infinite;
+    }
+    @keyframes spherePulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 0 40px rgba(255, 255, 255, 0.4), 0 0 60px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.6); }
+      50% { box-shadow: 0 0 28px rgba(255, 255, 255, 0.9), 0 0 55px rgba(255, 255, 255, 0.5), 0 0 85px rgba(255, 255, 255, 0.25), inset 0 0 22px rgba(255, 255, 255, 0.7); }
+    }
+    .cursor-sphere-inner {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.6) 50%, transparent 70%);
+    }
+    /* 环绕粒子 */
+    .orbit-particle {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      top: 50%;
+      left: 50%;
+    }
+    .p1 { animation: orbit1 5s ease-in-out infinite; }
+    @keyframes orbit1 {
+      0%   { transform: translate(-50%, -50%) rotate(0deg) translateX(40px) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.9; }
+      50%  { opacity: 0.4; }
+      90%  { opacity: 0.9; }
+      100% { transform: translate(-50%, -50%) rotate(360deg) translateX(40px) rotate(-360deg); opacity: 0; }
+    }
+    /* 情绪标签（固定顶部） */
+    .mood-label {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .mood-emoji { font-size: 40px; animation: float 3s ease-in-out infinite; }
+    .mood-text { font-size: 14px; color: rgba(0,0,0,0.55); letter-spacing: 2px; }
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-8px); }
+    }
+    .hint {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(0,0,0,0.28);
+      letter-spacing: 1px;
+      z-index: 5;
+    }
+    .features { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; max-width: 600px; }
+    .feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
+    .feature-icon { width: 28px; height: 28px; background: rgba(0,0,0,0.06); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>✨ 流光游标</h1>
+  <p class="subtitle">情绪标签固定顶部，游标自由移动</p>
+  <div class="preview-card">
+    <div class="mood-gradient"></div>
+    <!-- 情绪标签（固定顶部） -->
+    <div class="mood-label">
+      <span class="mood-emoji">😌</span>
+      <span class="mood-text">平静</span>
+    </div>
+    <!-- 游标 -->
+    <div class="cursor-wrapper">
+      <div class="cursor-breathe-ring"></div>
+      <div class="cursor-sphere">
+        <div class="cursor-sphere-inner"></div>
+      </div>
+      <div class="orbit-particle p1"></div>
+    </div>
+    <div class="hint">长按 1 秒标记情绪</div>
+  </div>
+  <div class="features">
+    <div class="feature"><div class="feature-icon">🏷️</div><span>标签居中</span></div>
+    <div class="feature"><div class="feature-icon">🌬️</div><span>呼吸光晕</span></div>
+    <div class="feature"><div class="feature-icon">💫</div><span>环绕粒子</span></div>
+  </div>
+</body>
+</html>

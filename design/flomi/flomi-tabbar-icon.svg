@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <!-- TabBar 主图标：主圆 -->
+  <circle cx="16" cy="20" r="12" fill="#FFB5A7"/>
+  <!-- TabBar 主图标：小圆 -->
+  <circle cx="30" cy="12" r="5" fill="#FFB5A7"/>
+  <!-- TabBar 主图标：另一小圆 -->
+  <circle cx="27" cy="30" r="4" fill="#FEC89A" opacity="0.8"/>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260">
+  <!-- 透明背景，任意场景使用 -->
+
+  <!-- 主气泡：桃粉色圆 -->
+  <circle cx="300" cy="115" r="55" fill="#FFB5A7"/>
+  <!-- 高光 -->
+  <ellipse cx="295" cy="100" rx="16" ry="10" fill="white" opacity="0.7"/>
+  <!-- 小气泡1（右上） -->
+  <circle cx="355" cy="85" r="18" fill="#FFB5A7"/>
+  <!-- 小气泡2（左下，暖杏色） -->
+  <circle cx="255" cy="155" r="13" fill="#FEC89A"/>
+  <!-- 小气泡3（更小点缀） -->
+  <circle cx="370" cy="130" r="8" fill="#FFB5A7" opacity="0.6"/>
+
+  <!-- 品牌文字 flomi -->
+  <text x="300" y="215"
+        font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif"
+        font-size="72" font-weight="600" fill="#5C4A3D"
+        text-anchor="middle" letter-spacing="2">flomi</text>
+</svg>

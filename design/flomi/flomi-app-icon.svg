@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- 暖白背景圆角 -->
+  <rect width="1024" height="1024" rx="220" fill="#FFF8F5"/>
+  <!-- 主圆 -->
+  <circle cx="480" cy="480" r="230" fill="#FFB5A7"/>
+  <!-- 高光 -->
+  <ellipse cx="455" cy="415" rx="65" ry="40" fill="white" opacity="0.75"/>
+  <!-- 小气泡1 -->
+  <circle cx="700" cy="340" r="72" fill="#FFB5A7"/>
+  <!-- 小气泡2 -->
+  <circle cx="680" cy="620" r="52" fill="#FEC89A" opacity="0.9"/>
+  <!-- 小气泡3 -->
+  <circle cx="320" cy="640" r="40" fill="#FFB5A7" opacity="0.6"/>
+</svg>
