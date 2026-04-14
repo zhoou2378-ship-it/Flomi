@@ -1,5 +1,16 @@
-<!-- Flomi 解压小游戏 — 呼吸练习 + 捏气泡 -->
+<!-- Flomi 解压小游戏 — 呼吸练习 + 清空烦恼 + 涂鸦 -->
 <view class="page">
+
+  <!-- 状态栏占位（自定义导航栏） -->
+  <view style="height:{{statusBarHeight}}px;"></view>
+
+  <!-- 导航栏：返回按钮 + 页面标题 -->
+  <view class="game-nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
+    <view class="game-back-btn" bindtap="goBack">
+      <text class="game-back-icon">‹</text>
+    </view>
+    <text class="game-nav-title">放松一下</text>
+  </view>
 
   <!-- 背景 -->
   <view class="ambient-bg">
@@ -7,82 +18,87 @@
     <view class="orb orb--b"></view>
   </view>
 
-
-  <!-- 游戏选择 -->
-  <view class="game-selector" wx:if="{{currentGame === 'menu'}}">
-    <text class="selector-title">选一个方式放松</text>
-    <view class="game-cards">
-
-      <!-- 呼吸练习 -->
-      <view class="game-card" bindtap="startGame" data-game="breath">
-        <view class="game-card__icon-wrap game-card__icon-wrap--breath">
-          <text class="game-card__icon">◯</text>
-        </view>
-        <text class="game-card__name">4-7-8 呼吸法</text>
-        <text class="game-card__desc">跟随节奏，深呼吸放松神经</text>
-        <text class="game-card__duration">约 2 分钟</text>
-      </view>
-
-      <!-- 捏气泡 -->
-      <view class="game-card" bindtap="startGame" data-game="bubble">
-        <view class="game-card__icon-wrap game-card__icon-wrap--bubble">
-          <text class="game-card__icon">◎</text>
-        </view>
-        <text class="game-card__name">捏气泡解压</text>
-        <text class="game-card__desc">疯狂点击，把压力全部爆掉</text>
-        <text class="game-card__duration">随时可停</text>
-      </view>
-
-      <!-- 涂鸦 -->
-      <view class="game-card" bindtap="startGame" data-game="doodle">
-        <view class="game-card__icon-wrap game-card__icon-wrap--doodle">
-          <text class="game-card__icon">✦</text>
-        </view>
-        <text class="game-card__name">随手涂鸦</text>
-        <text class="game-card__desc">随意画，不需要任何目的</text>
-        <text class="game-card__duration">随时可停</text>
-      </view>
-
-    </view>
-  </view>
-
   <!-- 游戏一：4-7-8 呼吸法 -->
   <view class="breath-game" wx:if="{{currentGame === 'breath'}}">
-    <text class="breath-instruction">{{breathInstruction}}</text>
+
+    <!-- 圆圈动画区 -->
     <view class="breath-circle-wrap">
-      <!-- 外圈脉冲 -->
-      <view class="breath-ring breath-ring--outer {{breathPhase}}"></view>
-      <view class="breath-ring breath-ring--mid {{breathPhase}}"></view>
-      <!-- 主圆 -->
-      <view class="breath-circle {{breathPhase}}">
-        <text class="breath-count">{{breathCount}}</text>
-        <text class="breath-count-unit">秒</text>
+      <view class="breath-ring breath-ring--outer {{breathStatus === 'running' ? breathPhase : ''}}"></view>
+      <view class="breath-ring breath-ring--mid {{breathStatus === 'running' ? breathPhase : ''}}"></view>
+      <view class="breath-circle {{breathStatus === 'running' ? breathPhase : ''}}">
+        <!-- idle 状态：提示 + 开始按钮 -->
+        <block wx:if="{{breathStatus === 'idle'}}">
+          <text class="breath-start-text" bindtap="breathStart">开始</text>
+        </block>
+        <!-- running / paused：动作 + 秒数 -->
+        <block wx:else>
+          <text class="breath-action">{{breathInstruction}}</text>
+          <text class="breath-count">{{breathCount}}</text>
+          <text class="breath-count-unit">秒</text>
+        </block>
       </view>
     </view>
-    <text class="breath-round">第 {{breathRound}} / {{breathTotalRounds}} 轮</text>
-    <view class="breath-progress">
-      <view class="breath-progress__bar" style="width:{{breathProgress}}%;background:{{breathBarColor}};"></view>
+
+    <!-- 轮次 + 进度条（始终占位，idle 时不可见） -->
+    <text class="breath-round {{breathStatus === 'idle' ? 'breath-round--hidden' : ''}}">第 {{breathRound}} / {{breathTotalRounds}} 轮</text>
+    <view class="breath-progress-wrap {{breathStatus === 'idle' ? 'breath-progress-wrap--hidden' : ''}}">
+      <view class="breath-progress">
+        <view class="breath-progress__bar" style="width:{{breathProgress}}%;background:{{breathBarColor}};"></view>
+      </view>
     </view>
-  </view>
-  <!-- 结束练习：底部固定按钮 -->
-  <view class="bottom-stop-bar" wx:if="{{currentGame === 'breath' || currentGame === 'bubble'}}">
-    <button class="stop-btn" bindtap="stopGame">
-      <text class="stop-btn__text">结束练习</text>
-    </button>
+
+    <!-- 控制按钮组（running / paused 时显示） -->
+    <view class="breath-controls" wx:if="{{breathStatus !== 'idle'}}">
+      <!-- 结束 -->
+      <view
+        wx:if="{{breathStatus !== 'idle'}}"
+        class="breath-ctrl-btn breath-ctrl-btn--ghost"
+        bindtap="breathStop"
+      >
+        <text class="breath-ctrl-text breath-ctrl-text--ghost">结束</text>
+      </view>
+      <!-- 继续 -->
+      <view
+        wx:if="{{breathStatus === 'paused'}}"
+        class="breath-ctrl-btn breath-ctrl-btn--primary"
+        bindtap="breathStart"
+      >
+        <text class="breath-ctrl-text">继续</text>
+      </view>
+      <!-- 暂停 -->
+      <view
+        wx:if="{{breathStatus === 'running'}}"
+        class="breath-ctrl-btn breath-ctrl-btn--secondary"
+        bindtap="breathPause"
+      >
+        <text class="breath-ctrl-text breath-ctrl-text--secondary">暂停</text>
+      </view>
+    </view>
+
   </view>
 
-  <!-- 游戏二：捏气泡 -->
-  <view class="bubble-game" wx:if="{{currentGame === 'bubble'}}">
-    <view class="bubble-game__field">
-      <block wx:for="{{gameBubbles}}" wx:key="id">
+  <!-- 游戏二：清空烦恼 -->
+  <view class="emoji-game" wx:if="{{currentGame === 'bubble'}}">
+    <!-- combo 计数 / 完成 toast，显示在页面中间 -->
+    <view class="bubble-combo-bar">
+      <block wx:if="{{!showClearToast}}">
+        <text class="bubble-combo-num">{{bubbleCombo}}</text>
+        <text class="bubble-combo-label">已消除</text>
+      </block>
+      <block wx:else>
+        <text class="bubble-combo-num bubble-combo-num--done">🎉</text>
+        <text class="bubble-combo-label bubble-combo-label--done">坏心情都帮你打包丢掉咯～</text>
+      </block>
+    </view>
+    <view class="emoji-field">
+      <block wx:for="{{emojiItems}}" wx:key="id">
         <view
-          class="game-bubble {{item.popping ? 'game-bubble--pop' : ''}} {{item.gone ? 'game-bubble--gone' : ''}}"
-          style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.size}}rpx;height:{{item.size}}rpx;background:{{item.color}};animation-delay:{{item.delay}}s;"
-          bindtap="popGameBubble"
+          wx:if="{{!item.gone}}"
+          class="emoji-item {{item.popping ? 'emoji-item--pop' : 'emoji-item--fall'}}"
+          style="left:{{item.x}}rpx;top:{{item.finalY}}rpx;font-size:{{item.size}}rpx;animation-duration:{{item.dur}}s;animation-delay:{{item.delay}}s;"
+          bindtap="tapEmoji"
           data-id="{{item.id}}"
-        >
-          <view class="game-bubble__shimmer"></view>
-        </view>
+        >{{item.emoji}}</view>
       </block>
     </view>
   </view>
@@ -119,18 +135,26 @@
     </view>
   </view>
 
-  <!-- 完成页 -->
-  <view class="done-screen" wx:if="{{currentGame === 'done'}}">
+  <!-- 完成页（背景内容） -->
+  <view class="done-screen" wx:if="{{showDonePanel}}">
     <text class="done-emoji">🌿</text>
     <text class="done-title">感觉好一些了吗？</text>
     <text class="done-body">记得，情绪没有对错。</text>
   </view>
 
   <!-- 完成页底部面板 -->
-  <view class="bottom-action {{currentGame === 'done' ? 'bottom-action--visible' : ''}}">
-    <view class="inline-panel-header">
-      <text class="inline-panel-title">写下来</text>
+  <view class="bottom-action {{showDonePanel ? 'bottom-action--visible' : ''}}">
+    <!-- 右上角关闭按钮 -->
+    <view class="done-panel-close" bindtap="closeDonePanel">✕</view>
+
+    <!-- 居中完成内容 -->
+    <view class="done-panel-hero">
+      <text class="done-panel-emoji">🌿</text>
+      <text class="done-panel-title">感觉好一些了吗？</text>
+      <text class="done-panel-body">记得，情绪没有对错。</text>
     </view>
+
+    <!-- 输入框 -->
     <view class="inline-input-wrap">
       <textarea
         class="inline-input"
@@ -144,6 +168,8 @@
         adjust-position="{{true}}"
       ></textarea>
     </view>
+
+    <!-- 按钮行 -->
     <view class="panel-btn-row">
       <button class="panel-btn panel-btn--secondary" bindtap="goBack">
         <text class="panel-btn__text panel-btn__text--secondary">回首页</text>

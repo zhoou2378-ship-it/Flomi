@@ -18,6 +18,7 @@ function getWeekDays() {
       dayNum: d.getDate(),
       dayLabel: DAY_LABELS[d.getDay()],
       isToday: i === 0,
+      isPast: i > 0,
     })
   }
   return days
@@ -44,38 +45,71 @@ function buildAnalysis(records) {
   }).length
   const negativeCount = total - positiveCount
 
-  // 心情复杂度：情绪种类数
-  const kindCount = sorted.length
-  const moodDesc = positiveCount > negativeCount ? '偏向愉悦' :
-                   negativeCount > positiveCount ? '有些沉重' : '复杂交织'
-
   // 起伏程度：energy 标准差
   const energies = records.map(r => { const e = EMOTIONS[r.emotionKey]; return e ? (e.energy || 50) : 50 })
   const mean = energies.reduce((s, v) => s + v, 0) / energies.length
   const std = Math.sqrt(energies.reduce((s, v) => s + (v - mean) ** 2, 0) / energies.length)
-  const fluctDesc = std >= 20 ? '起伏较大' : std >= 10 ? '起伏适中' : '起伏平缓'
+  const kindCount = sorted.length
 
-  // 具体行动建议
+  // 基于主导情绪 + 起伏程度生成有心理学依据的分析文案
+  // 每种情绪对应多条观察句，随机取一条；再根据起伏程度拼接补充说明
+  const emotionInsights = {
+    happy: [
+      '今天的愉悦感来自内在满足，心理学称之为"正向情感"——它能拓宽思维、增强创造力。',
+      '开心的状态下，大脑分泌多巴胺，让你更容易感受到连结感和动力。',
+    ],
+    calm: [
+      '平静是一种低唤醒的正向状态，神经科学研究表明它有助于前额叶皮层的理性决策。',
+      '今天的平静感是一种内在稳定的信号，身心处于较低的应激水平。',
+    ],
+    excited: [
+      '兴奋时肾上腺素和多巴胺同时升高，这种高唤醒状态适合行动和创造，但也容易消耗能量。',
+      '今天的兴奋感是积极的驱动力，注意在高能量之后给自己留一些恢复的空间。',
+    ],
+    grateful: [
+      '感恩是心理韧性的重要来源，研究显示它能激活大脑的奖励回路，降低皮质醇水平。',
+      '今天感受到了感恩，这种情绪能强化社会连结感，让人更有安全感。',
+    ],
+    anxious: [
+      '焦虑是大脑的"预警系统"在过度运转，它本质上是对未来不确定性的应激反应。',
+      '今天的焦虑感可能来自对结果的过度预期，认知行为疗法建议把担忧具体化，再逐一评估。',
+    ],
+    sad: [
+      '难过是一种低唤醒的负向情绪，它往往在提示你某些需求没有被满足，值得被温柔对待。',
+      '今天心情有些沉重，悲伤情绪有助于内省和整合，不需要急着"好起来"。',
+    ],
+    angry: [
+      '愤怒是边界被侵犯时的自然反应，它在提醒你某些事情对你来说很重要。',
+      '今天感受到了愤怒，这种高唤醒情绪需要一个出口——身体活动或表达都有助于释放。',
+    ],
+    tired: [
+      '疲惫是身心在发出"需要恢复"的信号，长期忽视它可能导致情绪耗竭。',
+      '今天的疲惫感可能是持续输出后的自然反应，身体在请求你放慢节奏。',
+    ],
+  }
+
+  const insightPool = emotionInsights[topKey] || ['今天的情绪有它自己的节奏，感受本身就有意义。']
+  const summary = insightPool[Math.floor(Math.random() * insightPool.length)]
+
+  // 行动建议卡片（type: 'game' 跳小游戏，type: 'text' 纯提示）
+  // game 图标与首页面板保持一致：breath=◯ bubble=◎ doodle=✦
   const positiveActions = [
-    '出去走走，感受一下今天的空气',
-    '喝杯喜欢的饮料，犒劳一下自己',
-    '把这份好心情分享给一个朋友',
-    '听几首喜欢的歌，延续这份愉悦',
-    '做一件一直想做但没做的小事',
+    { icon: '✦', label: '随手涂鸦', desc: '画点什么，延续好心情', type: 'game', game: 'doodle' },
+    { icon: '◯', label: '4-7-8 呼吸', desc: '深呼吸，把愉悦留久一点', type: 'game', game: 'breath' },
+    { icon: '☕', label: '喝杯喜欢的饮料', desc: '犒劳一下今天的自己', type: 'text' },
+    { icon: '🎵', label: '听首喜欢的歌', desc: '延续这份愉悦', type: 'text' },
   ]
   const negativeActions = [
-    '起来走走，动一动会好一些',
-    '喝口水，给自己几分钟安静',
-    '听一首舒缓的音乐，放松一下',
-    '找个舒服的地方坐着，深呼吸几次',
-    '给自己泡杯热茶，慢慢喝',
+    { icon: '◯', label: '4-7-8 呼吸法', desc: '跟随节奏，深呼吸放松神经', type: 'game', game: 'breath' },
+    { icon: '◎', label: '清空烦恼', desc: '点击消除，把烦恼全部清空', type: 'game', game: 'bubble' },
+    { icon: '✦', label: '随手涂鸦', desc: '随意画，不需要任何目的', type: 'game', game: 'doodle' },
+    { icon: '💧', label: '喝口水', desc: '给自己几分钟安静', type: 'text' },
   ]
   const mixedActions = [
-    '出去走走，换个环境清醒一下',
-    '喝口水，整理一下思绪',
-    '听首音乐，给情绪一点出口',
-    '写下此刻最想说的一句话',
-    '做几个深呼吸，感受当下',
+    { icon: '◯', label: '4-7-8 呼吸法', desc: '整理一下思绪', type: 'game', game: 'breath' },
+    { icon: '✦', label: '随手涂鸦', desc: '给情绪一个出口', type: 'game', game: 'doodle' },
+    { icon: '◎', label: '清空烦恼', desc: '点击消除，换个心情', type: 'game', game: 'bubble' },
+    { icon: '🌿', label: '深呼吸几次', desc: '感受当下，慢慢来', type: 'text' },
   ]
 
   const actionPool = positiveCount > negativeCount ? positiveActions
@@ -83,13 +117,10 @@ function buildAnalysis(records) {
                    : mixedActions
   const action = actionPool[Math.floor(Math.random() * actionPool.length)]
 
-  const summary = `今天心情${moodDesc}，${fluctDesc}，可以试试${action}。`
-
   return {
     summary,
+    action,
     topLabel: topEmotion.label,
-    topColor: topEmotion.textColor,
-    topBg: topEmotion.bubbleColor,
     total,
   }
 }
@@ -111,6 +142,26 @@ Page({
     chartReady: false,
     // 切换日期时内容区淡出标志
     switching: false,
+    // 行动卡片长按反馈
+    actionCardPressed: false,
+    // 折线图气泡
+    chartTooltip: { visible: false, date: '', label: '', time: '', x: 0, y: 0 },
+// 自定义导航栏占位高度
+statusBarHeight: 0,
+menuBtnTop: 0,
+menuBtnHeight: 32,
+  },
+
+  // 缓存各日期圆点坐标（用于 touch 命中检测）
+  _coordsCache: {},
+
+  onLoad() {
+    const app = getApp()
+    this.setData({
+  statusBarHeight: app.globalData.statusBarHeight || 0,
+  menuBtnTop: app.globalData.menuBtnTop || 0,
+  menuBtnHeight: app.globalData.menuBtnHeight || 32,
+})
   },
 
   onShow() {
@@ -326,15 +377,15 @@ Page({
           ctx.beginPath()
           ctx.moveTo(padL, p.y)
           ctx.lineTo(padL + chartW, p.y)
-          ctx.strokeStyle = 'rgba(140, 148, 200, 0.35)'
+          ctx.strokeStyle = 'rgba(120, 120, 115, 0.35)'
           ctx.lineWidth = 2
           ctx.stroke()
           ctx.setLineDash([])
         } else {
           // 多点：渐变填充区域
           const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH)
-          grad.addColorStop(0, 'rgba(140, 148, 200, 0.15)')
-          grad.addColorStop(1, 'rgba(140, 148, 200, 0.02)')
+          grad.addColorStop(0, 'rgba(120, 120, 115, 0.12)')
+          grad.addColorStop(1, 'rgba(120, 120, 115, 0.01)')
           ctx.beginPath()
           ctx.moveTo(coords[0].x, coords[0].y)
           for (let i = 1; i < coords.length; i++) {
@@ -356,7 +407,7 @@ Page({
             const cpx = (prev.x + curr.x) / 2
             ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y)
           }
-          ctx.strokeStyle = 'rgba(140, 148, 200, 0.7)'
+          ctx.strokeStyle = 'rgba(120, 120, 115, 0.5)'
           ctx.lineWidth = 1.5
           ctx.stroke()
         }
@@ -364,7 +415,7 @@ Page({
         // dotColor → 提取 rgb 分量，生成 20% 透明填充色
         function dotFillColor(dotColor) {
           const m = dotColor.match(/rgba?\((\d+\.?\d*),\s*(\d+\.?\d*),\s*(\d+\.?\d*)/)
-          if (!m) return 'rgba(140,148,200,0.2)'
+          if (!m) return 'rgba(120,120,115,0.2)'
           return `rgba(${m[1]},${m[2]},${m[3]},0.2)`
         }
 
@@ -403,8 +454,71 @@ Page({
           ctx.fillText(label, tx, timeY)
         })
 
+        // 缓存坐标供 touch 命中检测使用
+        this._coordsCache[date] = coords
+
         onDone && onDone()
       })
+  },
+
+  onChartTouch(e) {
+    const date = e.currentTarget.dataset.date
+    const coords = this._coordsCache[date]
+    if (!coords || coords.length === 0) return
+
+    const touch = e.touches[0]
+    if (!touch) return
+    // touch 坐标是相对于 canvas 元素的局部坐标
+    const tx = touch.x
+    const ty = touch.y
+
+    let nearest = null
+    let minDist = Infinity
+    coords.forEach(p => {
+      const d = Math.sqrt((p.x - tx) ** 2 + (p.y - ty) ** 2)
+      if (d < minDist) { minDist = d; nearest = p }
+    })
+
+    if (nearest && minDist < 28) {
+      // 气泡定位：在圆点正上方，左右居中对齐
+      this.setData({
+        chartTooltip: {
+          visible: true,
+          date,
+          label: nearest.label,
+          time: nearest.time,
+          x: nearest.x,
+          y: nearest.y - 44,  // 圆点上方 44px
+        },
+      })
+    } else {
+      this.setData({ 'chartTooltip.visible': false })
+    }
+  },
+
+  onChartTouchEnd() {
+    this.setData({ 'chartTooltip.visible': false })
+  },
+
+  onActionTouchStart() {
+    this.setData({ actionCardPressed: true })
+  },
+
+  onActionTouchEnd() {
+    this.setData({ actionCardPressed: false })
+  },
+
+  tapAction(e) {
+    this.setData({ actionCardPressed: false })
+    const { type, game } = e.currentTarget.dataset
+    if (type !== 'game' || !game) return
+    const gameMap = {
+      breath: '/pages/game/game?mode=breath',
+      bubble: '/pages/game/game?mode=bubble',
+      doodle: '/pages/game/game?mode=doodle',
+    }
+    const url = gameMap[game]
+    if (url) wx.navigateTo({ url })
   },
 
   toggleFilter(e) {

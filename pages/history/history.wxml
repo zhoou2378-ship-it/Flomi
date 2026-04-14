@@ -1,6 +1,14 @@
 <!-- 历史记录页 -->
 <view class="page-bg">
 
+  <!-- 状态栏占位（自定义导航栏） -->
+  <view style="height:{{statusBarHeight}}px;"></view>
+
+  <!-- 导航栏标题（与胶囊同行） -->
+  <view class="history-nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
+    <text class="history-nav-title">心情记录</text>
+  </view>
+
   <!-- TabBar -->
   <tabbar selected="{{1}}" id="tabbar"></tabbar>
 
@@ -9,7 +17,7 @@
     <view
       wx:for="{{weekDays}}"
       wx:key="date"
-      class="week-day {{item.date === selectedDate ? 'week-day--active' : ''}} {{item.hasRecord ? 'week-day--has' : ''}}"
+      class="week-day {{item.date === selectedDate ? 'week-day--active' : ''}} {{item.hasRecord ? 'week-day--has' : ''}} {{item.isPast && item.date !== selectedDate ? 'week-day--past' : ''}}"
       bindtap="selectDay"
       data-date="{{item.date}}"
       data-label="{{item.isToday ? '今天' : item.dayLabel}}"
@@ -32,40 +40,67 @@
     <!-- 有记录 -->
     <block wx:else>
 
-      <!-- 心情分析卡片 -->
-      <view wx:if="{{selectedAnalysis}}" class="analysis-card">
-        <view class="analysis-header">
-          <text class="analysis-title">心情分析</text>
-          <view class="analysis-badge" style="background:{{selectedAnalysis.topBg}};color:{{selectedAnalysis.topColor}}">
-            {{selectedAnalysis.topLabel}}
-          </view>
-        </view>
-        <text class="analysis-summary">{{selectedAnalysis.summary}}</text>
-      </view>
-
       <!-- 心情记录卡片 -->
       <view wx:for="{{selectedGroups}}" wx:key="date" class="chart-card">
         <view class="chart-date-row">
           <text class="chart-date-label">心情记录</text>
-          <text class="chart-count">{{item.records.length}} 条记录</text>
         </view>
 
-        <!-- canvas 常驻 DOM，用 opacity 控制显隐避免闪烁；不足2条时折叠高度 -->
-        <canvas
-          type="2d"
-          id="chart-{{item.date}}"
-          class="chart-canvas {{item.showChart ? '' : 'chart-canvas--hidden'}}"
-          style="opacity:{{item.showChart && chartReady ? 1 : 0}}"
-        ></canvas>
+        <!-- 分析文案（图表上方） -->
+        <text wx:if="{{selectedAnalysis}}" class="analysis-summary">{{selectedAnalysis.summary}}</text>
 
-        <!-- 图例（始终显示，showChart 时跟随 chartReady 淡入） -->
-        <view class="chart-legend" style="opacity:{{item.showChart ? (chartReady ? 1 : 0) : 1}}">
-          <view wx:for="{{item.records}}" wx:key="id" wx:for-item="rec" class="legend-item">
-            <view class="legend-dot" style="background:{{rec.emotionDeepBg}}"></view>
-            <text class="legend-label">{{rec.emotionLabel}}</text>
+        <!-- canvas + 气泡（相对定位容器） -->
+        <view class="chart-wrap">
+          <canvas
+            type="2d"
+            id="chart-{{item.date}}"
+            class="chart-canvas {{item.showChart ? '' : 'chart-canvas--hidden'}}"
+            style="opacity:{{item.showChart && chartReady ? 1 : 0}}"
+            bindtouchstart="onChartTouch"
+            bindtouchmove="onChartTouch"
+            bindtouchend="onChartTouchEnd"
+            data-date="{{item.date}}"
+          ></canvas>
+          <!-- 气泡标签 -->
+          <view
+            wx:if="{{chartTooltip.visible && chartTooltip.date === item.date}}"
+            class="chart-tooltip"
+            style="left:{{chartTooltip.x}}px;top:{{chartTooltip.y}}px;"
+          >
+            <text class="chart-tooltip__label">{{chartTooltip.label}}</text>
+            <text class="chart-tooltip__time">{{chartTooltip.time}}</text>
           </view>
         </view>
 
+      </view>
+
+      <!-- 行动推荐卡片（独立，心情记录卡片下方） -->
+      <view
+        wx:if="{{selectedAnalysis}}"
+        class="action-card {{selectedAnalysis.action.type === 'game' ? 'action-card--game' : ''}} {{actionCardPressed ? 'action-card--pressed' : ''}}"
+        bindtap="tapAction"
+        bindtouchstart="onActionTouchStart"
+        bindtouchend="onActionTouchEnd"
+        bindtouchcancel="onActionTouchEnd"
+        data-type="{{selectedAnalysis.action.type}}"
+        data-game="{{selectedAnalysis.action.game}}"
+      >
+        <view class="action-card__icon-wrap action-card__icon-wrap--{{selectedAnalysis.action.game || 'text'}}">
+          <!-- breath: 空心圆 -->
+          <view wx:if="{{selectedAnalysis.action.game === 'breath'}}" class="action-icon action-icon--breath"></view>
+          <!-- bubble: 双圆环 -->
+          <view wx:elif="{{selectedAnalysis.action.game === 'bubble'}}" class="action-icon action-icon--bubble">
+            <view class="action-icon--bubble-inner"></view>
+          </view>
+          <!-- doodle: 四角星 -->
+          <view wx:elif="{{selectedAnalysis.action.game === 'doodle'}}" class="action-icon action-icon--doodle"></view>
+          <!-- text: emoji 直接显示 -->
+          <text wx:else class="action-card__icon-text">{{selectedAnalysis.action.icon}}</text>
+        </view>
+        <view class="action-card__text">
+          <text class="action-card__label">{{selectedAnalysis.action.label}}</text>
+          <text class="action-card__desc">{{selectedAnalysis.action.desc}}</text>
+        </view>
       </view>
 
     </block>

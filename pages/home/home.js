@@ -110,12 +110,29 @@ Page({
     // 负向情绪安抚文案
     sootheMain: '',
     sootheSub: '',
+    // 键盘弹起时面板底部偏移（px）
+    keyboardOffset: 0,
+    // 自定义导航栏占位高度
+    statusBarHeight: 0,
+    menuBtnTop: 0,
+    menuBtnHeight: 32,
   },
 
   onLoad() {
+    const app = getApp()
+    this.setData({
+      statusBarHeight: app.globalData.statusBarHeight || 0,
+      menuBtnTop: app.globalData.menuBtnTop || 0,
+      menuBtnHeight: app.globalData.menuBtnHeight || 32,
+    })
     this.setGreeting()
     this.buildEmotionBubbles()
     this.setInputPlaceholder()
+  },
+
+  onHide() {
+    // 离开首页时提前重置面板，确保返回时已是默认态，不会看到收起动画
+    this.setData({ showBottomAction: false, journalText: '', keyboardOffset: 0 })
   },
 
   onShow() {
@@ -126,21 +143,58 @@ Page({
 
   // ===== 初始化 =====
 
-  setInputPlaceholder() {
-    const PLACEHOLDERS = [
+  setInputPlaceholder(emotionKey) {
+    const PLACEHOLDERS_BY_EMOTION = {
+      happy: [
+        '今天什么让你感到开心？',
+        '有什么让你感到温暖的瞬间？',
+        '把这份好心情记下来吧～',
+        '今天你为自己做了什么好事？',
+      ],
+      calm: [
+        '此刻你最想对自己说什么？',
+        '平静的时候，你在想什么？',
+        '今天有什么让你感到踏实的事？',
+      ],
+      excited: [
+        '是什么让你这么兴奋？',
+        '把这份能量记下来！',
+        '今天发生了什么好事？',
+      ],
+      grateful: [
+        '你在感谢谁，或者什么事？',
+        '今天有什么让你觉得幸运的瞬间？',
+        '把这份感恩写下来吧～',
+      ],
+      anxious: [
+        '你在担心什么？写出来会轻一点。',
+        '把让你不安的事情说出来吧。',
+        '此刻最让你紧张的是什么？',
+      ],
+      sad: [
+        '你有什么想放下的事情吗？',
+        '难过的时候，写下来会好一些。',
+        '今天发生了什么，让你有这样的感受？',
+        '有什么话，你一直想说但没说出口？',
+      ],
+      angry: [
+        '把让你生气的事情说出来吧。',
+        '是什么让你感到不公平？',
+        '写下来，让情绪有个出口。',
+      ],
+      tired: [
+        '今天是什么让你感到疲惫？',
+        '你需要什么样的休息？',
+        '写下此刻的感受，不需要完美...',
+      ],
+    }
+    const pool = PLACEHOLDERS_BY_EMOTION[emotionKey] || [
       '写下此刻的感受，不需要完美...',
-      '你有什么想放下的事情吗？',
       '今天发生了什么，让你有这样的感受？',
       '此刻你最想对自己说什么？',
-      '有什么让你感到温暖的瞬间？',
-      '什么让你感到有力量？',
-      '今天你为自己做了什么好事？',
-      '如果把今天的心情画成一幅画，会是什么样子？',
-      '有什么话，你一直想说但没说出口？',
-      '今天最让你印象深刻的一件小事是什么？',
     ]
-    const idx = Math.floor(Math.random() * PLACEHOLDERS.length)
-    this.setData({ inputPlaceholder: PLACEHOLDERS[idx] })
+    const idx = Math.floor(Math.random() * pool.length)
+    this.setData({ inputPlaceholder: pool[idx] })
   },
 
   setGreeting() {
@@ -214,6 +268,9 @@ Page({
       actionBtnText: '写下来',
       showBottomAction: true,
     })
+
+    // placeholder 跟随情绪随机变化
+    this.setInputPlaceholder(key)
 
     // 保存情绪记录
     this._currentEmotionKey = key
@@ -310,9 +367,20 @@ Page({
     this.setData({ journalText: e.detail.value })
   },
 
+  onInputFocus(e) {
+    // 键盘弹起：将面板底部顶到键盘顶部
+    const keyboardHeight = e.detail.height || 0
+    this.setData({ keyboardOffset: keyboardHeight })
+  },
+
+  onInputBlur() {
+    // 键盘收起：面板回到底部
+    this.setData({ keyboardOffset: 0 })
+  },
+
   onClosePanelTap() {
     // 关闭底部面板，回到气泡阶段
-    this.setData({ showBottomAction: false, journalText: '' })
+    this.setData({ showBottomAction: false, journalText: '', keyboardOffset: 0 })
   },
 
   onSkipTap() {

@@ -10,7 +10,8 @@
     "navigationBarBackgroundColor": "#fbf9f5",
     "navigationBarTitleText": "Flomi",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#fbf9f5"
+    "backgroundColor": "#fbf9f5",
+    "navigationStyle": "custom"
   },
   "tabBar": {
     "custom": true,

@@ -1,6 +1,14 @@
 <!-- Flomi 首页 — 情绪气泡系统 -->
 <view class="page">
 
+  <!-- 状态栏占位（自定义导航栏） -->
+  <view style="height:{{statusBarHeight}}px;"></view>
+
+  <!-- 顶部导航栏标题（与胶囊同行） -->
+  <view class="home-nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
+    <text class="home-nav-title">Flomi</text>
+  </view>
+
   <!-- 动态液体背景 -->
   <view class="ambient-bg">
     <view class="orb orb--a" style="background:{{ambientColor}};"></view>
@@ -11,10 +19,10 @@
   </view>
 
   <!-- 顶部问候（气泡全部消失后隐藏） -->
-  <view class="greeting-bar {{showBottomAction ? 'greeting-bar--hidden' : ''}}">
+  <view class="greeting-bar">
     <view class="greeting-inner">
       <text class="greeting-time">{{timeGreeting}}</text>
-      <text class="greeting-question">今天感觉怎么样？</text>
+      <text class="greeting-question">现在感觉怎么样？</text>
     </view>
   </view>
 
@@ -59,13 +67,13 @@
   </view>
 
   <!-- 底部操作区 — 内联记录/舒缓面板 -->
-  <view class="bottom-action {{showBottomAction ? 'bottom-action--visible' : ''}}">
+  <view class="bottom-action {{showBottomAction ? 'bottom-action--visible' : ''}} {{selectedEmotion.direction === 'negative' ? 'bottom-action--negative' : ''}}" style="{{keyboardOffset ? 'bottom:' + keyboardOffset + 'px;' : ''}}">
 
     <!-- 正向：输入框 -->
     <view wx:if="{{selectedEmotion.direction === 'positive'}}">
       <view class="inline-panel-header">
         <text class="inline-panel-title">记录一下</text>
-        <text class="inline-panel-emotion" style="color:{{selectedEmotion.textColor}};background:{{selectedEmotion.bubbleColor}}">{{selectedEmotion.label}}</text>
+        <text class="inline-panel-emotion">{{selectedEmotion.label}}</text>
         <view class="panel-close-btn" bindtap="onClosePanelTap">✕</view>
       </view>
       <view class="inline-input-wrap">
@@ -75,10 +83,12 @@
           placeholder-class="inline-placeholder"
           value="{{journalText}}"
           bindinput="onJournalInput"
-          auto-height
+          bindfocus="onInputFocus"
+          bindblur="onInputBlur"
           maxlength="500"
           show-confirm-bar="{{false}}"
-          adjust-position="{{true}}"
+          adjust-position="{{false}}"
+          confirm-type="done"
         ></textarea>
       </view>
     </view>
@@ -97,34 +107,27 @@
         <view class="game-card-inline__icon game-card-inline__icon--breath">
           <text class="game-card-inline__icon-text">◯</text>
         </view>
-        <view class="game-card-inline__body">
-          <text class="game-card-inline__name">4-7-8 呼吸法</text>
-          <text class="game-card-inline__desc">跟随节奏，深呼吸放松神经</text>
-          <text class="game-card-inline__duration">约 2 分钟</text>
-        </view>
+        <text class="game-card-inline__name">4-7-8 呼吸法</text>
+        <text class="game-card-inline__desc">跟随节奏，深呼吸放松神经 · 约 2 分钟</text>
       </view>
 
       <view class="game-card-inline" bindtap="startGameDirect" data-game="bubble">
         <view class="game-card-inline__icon game-card-inline__icon--bubble">
           <text class="game-card-inline__icon-text">◎</text>
         </view>
-        <view class="game-card-inline__body">
-          <text class="game-card-inline__name">捏气泡解压</text>
-          <text class="game-card-inline__desc">疯狂点击，把压力全部爆掉</text>
-          <text class="game-card-inline__duration">随时可停</text>
-        </view>
+        <text class="game-card-inline__name">清空烦恼</text>
+        <text class="game-card-inline__desc">点击消除，把烦恼全部清空 · 随时可停</text>
       </view>
 
       <view class="game-card-inline" bindtap="startGameDirect" data-game="doodle">
         <view class="game-card-inline__icon game-card-inline__icon--doodle">
           <text class="game-card-inline__icon-text">✦</text>
         </view>
-        <view class="game-card-inline__body">
-          <text class="game-card-inline__name">随手涂鸦</text>
-          <text class="game-card-inline__desc">随意画，不需要任何目的</text>
-          <text class="game-card-inline__duration">随时可停</text>
-        </view>
+        <text class="game-card-inline__name">随手涂鸦</text>
+        <text class="game-card-inline__desc">随意画，不需要任何目的 · 随时可停</text>
       </view>
+
+      <view class="game-cards-inline__bottom-spacer"></view>
     </view>
 
     <!-- 正向：按钮行 -->
@@ -146,6 +149,9 @@
       <text class="combo-label">combo</text>
     </view>
   </view>
+
+  <!-- 品牌标语 -->
+  <view class="brand-tagline">Tudo flui · 万物皆流</view>
 
   <!-- TabBar -->
   <tabbar selected="{{0}}"></tabbar>

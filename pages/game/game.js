@@ -1,19 +1,9 @@
 // Flomi 解压小游戏页
-// 包含：4-7-8呼吸法 / 捏气泡 / 涂鸦
-
-const GAME_BUBBLE_COLORS = [
-  'rgba(184, 192, 255, 0.65)',
-  'rgba(255, 218, 217, 0.65)',
-  'rgba(218, 232, 190, 0.65)',
-  'rgba(250, 200, 200, 0.65)',
-  'rgba(170, 178, 240, 0.60)',
-  'rgba(255, 218, 150, 0.60)',
-]
+// 包含：4-7-8呼吸法 / 烦恼消消 / 涂鸦
 
 const DOODLE_COLORS = ['#576342', '#535b93', '#7b5556', '#A3B18A', '#aab2f0', '#fac8c8', '#31332f']
 
-// 呼吸阶段配置（4-7-8法，Andrew Weil 博士提出）
-// 吸气4秒、屏气7秒、呼气8秒，呼气时间是吸气的2倍，激活副交感神经降低心率
+// 呼吸阶段配置（4-7-8法）
 const BREATH_PHASES = [
   { phase: 'inhale',  label: '吸气',  duration: 4, color: 'rgba(140,148,200,0.75)' },
   { phase: 'hold',    label: '屏气',  duration: 7, color: 'rgba(170,178,240,0.65)' },
@@ -21,13 +11,33 @@ const BREATH_PHASES = [
 ]
 const BREATH_TOTAL_ROUNDS = 4
 
+// 清空烦恼 emoji 主题（三类独立，每次随机选一类）
+const EMOJI_THEMES = [
+  ['🥹','😔','😭','😫','💔','😡','😒','😐','😣','😠','🙁','😿'],
+  ['🐭','🐮','🐯','🐰','🐲','🐍','🐑','🐎','🐤','🐒','🐶','🐷'],
+  ['🌧️','⚡️','🪾','🌲','🍂','🌺','💦','🌊','☁️','🍃','🥀','🌸'],
+]
+
+const MAX_EMOJI = 48
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
+function randFloat(min, max) {
+  return Math.random() * (max - min) + min
+}
+
+function pickEmoji(pool) {
+  return pool[randInt(0, pool.length - 1)]
+}
+
 Page({
-  data: {
-    currentGame: 'menu',
+data: {
+currentGame: 'breath',
+statusBarHeight: 0,
+menuBtnTop: 0,
+menuBtnHeight: 32,
 
     // 呼吸
     breathPhase: 'inhale',
@@ -37,10 +47,13 @@ Page({
     breathTotalRounds: BREATH_TOTAL_ROUNDS,
     breathProgress: 0,
     breathBarColor: 'rgba(140,148,200,0.75)',
+    // 呼吸控制状态：'idle' | 'running' | 'paused'
+    breathStatus: 'idle',
 
-    // 捏气泡
-    gameBubbles: [],
-    bubblesPopped: 0,
+    // 清空烦恼
+    emojiItems: [],
+    showClearToast: false,
+    bubbleCombo: 0,
 
     // 涂鸦
     doodleColors: DOODLE_COLORS,
@@ -49,22 +62,29 @@ Page({
     // 完成页日记
     journalText: '',
     inputPlaceholder: '写下此刻的感受，不需要完美...',
+    showDonePanel: false,
   },
 
   _breathTimer: null,
   _breathPhaseIndex: 0,
-  _breathCountdown: 0,
   _breathRound: 1,
+  _breathElapsed: 0,       // 当前阶段已过秒数（暂停恢复用）
   _doodleCtx: null,
   _doodleDrawing: false,
   _doodleLastX: 0,
   _doodleLastY: 0,
+  _emojiPool: [],
+  _emojiIdCounter: 0,
 
   onLoad(options) {
-    // 从首页直接传入 game 参数，跳过 menu
-    if (options && options.game) {
-      this._launchGame(options.game)
-    }
+    const app = getApp()
+    this.setData({
+  statusBarHeight: app.globalData.statusBarHeight || 0,
+  menuBtnTop: app.globalData.menuBtnTop || 0,
+  menuBtnHeight: app.globalData.menuBtnHeight || 32,
+})
+    const game = (options && (options.game || options.mode)) || 'breath'
+    this._launchGame(game)
   },
 
   onUnload() {
@@ -75,8 +95,9 @@ Page({
     wx.navigateBack()
   },
 
-  goJournal() {
-    wx.navigateTo({ url: '/pages/journal/journal' })
+  closeDonePanel() {
+    this.setData({ showDonePanel: false })
+    wx.navigateBack()
   },
 
   onJournalInput(e) {
@@ -91,19 +112,20 @@ Page({
     setTimeout(() => wx.navigateBack(), 1600)
   },
 
-  // 内部启动方法（供 onLoad 和 startGame 共用）
+  // 内部启动方法
   _launchGame(game) {
     const titleMap = {
       breath: '4-7-8 呼吸法',
-      bubble: '捏气泡解压',
+      bubble: '清空烦恼',
       doodle: '随手涂鸦',
     }
     wx.setNavigationBarTitle({ title: titleMap[game] || '放松一下' })
-    this.setData({ currentGame: game })
+    this.setData({ currentGame: game, showDonePanel: false })
     if (game === 'breath') {
-      this.startBreath()
+      // 进入呼吸页，等用户点「开始」
+      this.setData({ breathStatus: 'idle', breathCount: BREATH_PHASES[0].duration, breathInstruction: BREATH_PHASES[0].label, breathProgress: 0 })
     } else if (game === 'bubble') {
-      this.buildGameBubbles()
+      this._initEmojiGame()
     } else if (game === 'doodle') {
       setTimeout(() => this.initDoodle(), 300)
     }
@@ -114,23 +136,38 @@ Page({
     this._launchGame(game)
   },
 
-  stopGame() {
-    this.clearBreathTimer()
-    this.setData({ currentGame: 'done' })
+  // ===== 呼吸游戏控制 =====
+
+  breathStart() {
+    if (this.data.breathStatus === 'idle') {
+      // 首次开始
+      this._breathPhaseIndex = 0
+      this._breathRound = 1
+      this._breathElapsed = 0
+      this.setData({ breathStatus: 'running', breathRound: 1 })
+      this.runBreathPhase()
+    } else if (this.data.breathStatus === 'paused') {
+      // 恢复
+      this.setData({ breathStatus: 'running' })
+      this._resumeBreathPhase()
+    }
   },
 
-  // ===== 呼吸游戏 =====
+  breathPause() {
+    if (this.data.breathStatus !== 'running') return
+    this.clearBreathTimer()
+    this.setData({ breathStatus: 'paused' })
+  },
 
-  startBreath() {
-    this._breathPhaseIndex = 0
-    this._breathRound = 1
-    this.runBreathPhase()
+  breathStop() {
+    this.clearBreathTimer()
+    this.setData({ breathStatus: 'idle', showDonePanel: true })
   },
 
   runBreathPhase() {
     const phaseConfig = BREATH_PHASES[this._breathPhaseIndex]
     const totalSeconds = phaseConfig.duration
-    let elapsed = 0
+    this._breathElapsed = 0
 
     this.setData({
       breathPhase: phaseConfig.phase,
@@ -138,21 +175,33 @@ Page({
       breathCount: totalSeconds,
       breathRound: this._breathRound,
       breathBarColor: phaseConfig.color,
+      breathProgress: 0,
     })
 
     wx.vibrateShort({ type: 'light' })
+    this._startBreathTick(totalSeconds)
+  },
 
+  _resumeBreathPhase() {
+    const phaseConfig = BREATH_PHASES[this._breathPhaseIndex]
+    const totalSeconds = phaseConfig.duration
+    // 从已过秒数继续
+    this._startBreathTick(totalSeconds)
+  },
+
+  _startBreathTick(totalSeconds) {
     this._breathTimer = setInterval(() => {
-      elapsed++
-      const remaining = totalSeconds - elapsed
-      const progress = (elapsed / totalSeconds) * 100
+      if (this.data.breathStatus !== 'running') return
+      this._breathElapsed++
+      const remaining = totalSeconds - this._breathElapsed
+      const progress = (this._breathElapsed / totalSeconds) * 100
 
       this.setData({
         breathCount: remaining > 0 ? remaining : 0,
         breathProgress: progress,
       })
 
-      if (elapsed >= totalSeconds) {
+      if (this._breathElapsed >= totalSeconds) {
         clearInterval(this._breathTimer)
         this._breathTimer = null
         this.nextBreathPhase()
@@ -164,18 +213,21 @@ Page({
     this._breathPhaseIndex++
 
     if (this._breathPhaseIndex >= BREATH_PHASES.length) {
-      // 完成一轮
       this._breathPhaseIndex = 0
       this._breathRound++
 
       if (this._breathRound > BREATH_TOTAL_ROUNDS) {
         // 全部完成
-        this.setData({ currentGame: 'done' })
+        this.setData({ breathStatus: 'idle', showDonePanel: true })
         return
       }
     }
 
-    setTimeout(() => this.runBreathPhase(), 500)
+    setTimeout(() => {
+      if (this.data.breathStatus === 'running') {
+        this.runBreathPhase()
+      }
+    }, 500)
   },
 
   clearBreathTimer() {
@@ -185,55 +237,69 @@ Page({
     }
   },
 
-  // ===== 捏气泡游戏 =====
+  // ===== 清空烦恼 =====
 
-  buildGameBubbles() {
-    const count = randInt(18, 24)
-    const bubbles = []
-    const fieldW = 750
-    const fieldH = 1000
+  _initEmojiGame() {
+    this._emojiIdCounter = 0
 
+    // 随机选一个主题
+    const theme = EMOJI_THEMES[randInt(0, EMOJI_THEMES.length - 1)]
+
+    // 每次随机数量：32 ~ 64，从该主题循环取用
+    const count = randInt(32, MAX_EMOJI)
+
+    this.setData({ emojiItems: [], showClearToast: false, bubbleCombo: 0 })
+
+    const items = []
     for (let i = 0; i < count; i++) {
-      const size = randInt(80, 180)
-      bubbles.push({
-        id: i,
-        x: randInt(10, fieldW - size - 10),
-        y: randInt(10, fieldH - size - 10),
-        size,
-        color: GAME_BUBBLE_COLORS[i % GAME_BUBBLE_COLORS.length],
-        delay: (i * 0.15) % 2,
-        popping: false,
-        gone: false,
-      })
+      const emoji = theme[i % theme.length]
+      items.push(this._makeEmojiItem(emoji, i * 80))
     }
-
-    this.setData({ gameBubbles: bubbles, bubblesPopped: 0 })
+    this.setData({ emojiItems: items })
   },
 
-  popGameBubble(e) {
+  _makeEmojiItem(emoji, dropDelayMs) {
+    const id = ++this._emojiIdCounter
+    // 字号随机：53 ~ 106rpx（整体放大10%）
+    const size = randInt(53, 106)
+    const fieldW = 750
+    const x = randInt(10, fieldW - size - 10)
+    // 掉落时长：慢快随机，营造层次感
+    const dur = randFloat(0.7, 1.4)
+    // 最终停留的 Y 位置（屏幕内随机分布，留出底部安全区）
+    const finalY = randInt(80, 1300)
+
+    return {
+      id,
+      emoji,
+      x,
+      size,
+      popping: false,
+      gone: false,
+      dur,
+      delay: dropDelayMs / 1000,
+      finalY,
+    }
+  },
+
+  tapEmoji(e) {
     const id = e.currentTarget.dataset.id
-    const bubbles = this.data.gameBubbles
-    const idx = bubbles.findIndex(b => b.id === id)
-    if (idx < 0 || bubbles[idx].gone) return
+    const items = this.data.emojiItems
+    const idx = items.findIndex(b => b.id === id)
+    if (idx < 0 || items[idx].gone || items[idx].popping) return
 
     wx.vibrateShort({ type: 'light' })
+    const newCombo = this.data.bubbleCombo + 1
+    this.setData({ [`emojiItems[${idx}].gone`]: true, bubbleCombo: newCombo })
 
-    const poppingKey = `gameBubbles[${idx}].popping`
-    this.setData({ [poppingKey]: true })
-
-    setTimeout(() => {
-      const goneKey = `gameBubbles[${idx}].gone`
-      this.setData({
-        [goneKey]: true,
-        bubblesPopped: this.data.bubblesPopped + 1,
-      })
-
-      // 全部爆完后补充新一批
-      const remaining = this.data.gameBubbles.filter(b => !b.gone).length
-      if (remaining === 0) {
-        setTimeout(() => this.buildGameBubbles(), 600)
-      }
-    }, 300)
+    const remaining = this.data.emojiItems.filter(b => !b.gone).length
+    if (remaining === 0) {
+      this.setData({ showClearToast: true })
+      setTimeout(() => {
+        this.setData({ showClearToast: false })
+        setTimeout(() => this._initEmojiGame(), 400)
+      }, 2200)
+    }
   },
 
   // ===== 涂鸦游戏 =====
@@ -296,5 +362,10 @@ Page({
   clearDoodle() {
     if (!this._doodleCtx) return
     this._doodleCtx.clearRect(0, 0, this._doodleW, this._doodleH)
+  },
+
+  stopGame() {
+    this.clearBreathTimer()
+    this.setData({ showDonePanel: true })
   },
 })

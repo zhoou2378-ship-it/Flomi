@@ -2,9 +2,32 @@ App({
   globalData: {
     currentTab: 1,
     cloudReady: false,
+    statusBarHeight: 0,
+    menuBtnTop: 0,
+    menuBtnHeight: 32,
   },
   onLaunch() {
     console.log('Flomi launched')
+
+    // 读取导航栏占位高度：取胶囊按钮底部位置，确保内容不与右上角胶囊重叠
+    try {
+      const menuBtn = wx.getMenuButtonBoundingClientRect()
+      // 胶囊底部 + 8px 间距 作为占位高度
+      this.globalData.statusBarHeight = (menuBtn.bottom || 0) + 8
+      this.globalData.menuBtnTop = menuBtn.top || 0
+      this.globalData.menuBtnHeight = menuBtn.height || 32
+    } catch (e) {
+      try {
+        const info = wx.getWindowInfo()
+        this.globalData.statusBarHeight = (info.statusBarHeight || 44) + 44
+        this.globalData.menuBtnTop = (info.statusBarHeight || 44) + 6
+        this.globalData.menuBtnHeight = 32
+      } catch (e2) {
+        this.globalData.statusBarHeight = 88
+        this.globalData.menuBtnTop = 50
+        this.globalData.menuBtnHeight = 32
+      }
+    }
 
     // 初始化云开发（需在微信云开发控制台创建环境后替换 env ID）
     try {

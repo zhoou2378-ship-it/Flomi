@@ -10,6 +10,53 @@
   flex-direction: column;
 }
 
+/* 导航栏容器（与胶囊同行） */
+.game-nav-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24rpx;
+}
+
+/* 返回按钮（圆形） */
+.game-back-btn {
+  width: 72rpx;
+  height: 72rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-back-icon {
+  font-size: 52rpx;
+  color: var(--color-on-surface);
+  line-height: 1;
+  margin-left: -4rpx;
+  font-weight: 300;
+}
+
+/* 页面标题（绝对居中，不受返回按钮影响） */
+.game-nav-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  letter-spacing: -0.01em;
+  pointer-events: none;
+}
+
 /* 背景 */
 .ambient-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .orb { position: absolute; border-radius: 9999rpx; filter: blur(160rpx); }
@@ -81,17 +128,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40rpx;
-  padding: 0 48rpx calc(160rpx + env(safe-area-inset-bottom));
+  gap: 60rpx;
+  padding: 0 48rpx 60rpx;
 }
 
 .breath-circle-wrap {
   position: relative;
-  width: 400rpx;
-  height: 400rpx;
+  width: 560rpx;
+  height: 560rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: -40rpx;
 }
 
 .breath-ring {
@@ -101,74 +149,108 @@
 }
 
 .breath-ring--outer {
-  width: 400rpx;
-  height: 400rpx;
-  background: rgba(184, 192, 255, 0.15);
+  width: 560rpx;
+  height: 560rpx;
+  background: rgba(184, 192, 255, 0.12);
+  border: none;
+  animation: breathRingPulse 4s ease-in-out infinite;
 }
 
 .breath-ring--mid {
-  width: 340rpx;
-  height: 340rpx;
-  background: rgba(184, 192, 255, 0.2);
+  width: 470rpx;
+  height: 470rpx;
+  background: rgba(184, 192, 255, 0.18);
+  border: none;
+  animation: breathRingPulse 4s ease-in-out infinite 0.6s;
+}
+
+@keyframes breathRingPulse {
+  0%   { transform: scale(1);    opacity: 0.7; }
+  50%  { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1);    opacity: 0.7; }
 }
 
 .breath-circle {
-  width: 280rpx;
-  height: 280rpx;
+  width: 380rpx;
+  height: 380rpx;
   border-radius: 9999rpx;
   background: rgba(184, 192, 255, 0.55);
-  border: 2rpx solid rgba(83, 91, 147, 0.2);
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rpx;
+  gap: 18rpx;
   transition: transform 1s ease-in-out, background 0.5s;
   box-shadow: 0 16rpx 64rpx rgba(83, 91, 147, 0.2);
   z-index: 1;
 }
 
-/* 吸气：放大 */
+/* 吸气 */
 .inhale .breath-circle { transform: scale(1.35); background: rgba(184, 192, 255, 0.7); }
 .inhale .breath-ring--mid { transform: scale(1.2); opacity: 0.8; }
 .inhale .breath-ring--outer { transform: scale(1.15); opacity: 0.6; }
 
-/* 屏气：保持 */
+/* 屏气 */
 .hold .breath-circle { transform: scale(1.35); background: rgba(218, 232, 190, 0.7); }
 .hold .breath-ring--mid { transform: scale(1.2); opacity: 0.6; }
 
-/* 呼气：缩小 */
+/* 呼气 */
 .exhale .breath-circle { transform: scale(1.0); background: rgba(184, 192, 255, 0.4); }
 .exhale .breath-ring--mid { transform: scale(1.0); opacity: 0.4; }
 .exhale .breath-ring--outer { transform: scale(1.0); opacity: 0.3; }
 
-.breath-count {
-  font-size: 80rpx;
-  font-weight: 300;
+/* 圆圈内：开始文字 */
+.breath-start-text {
+  font-size: 56rpx;
+  font-weight: 200;
   color: var(--color-on-surface);
-  letter-spacing: -0.04em;
+  letter-spacing: 0.08em;
+}
+
+/* 圆圈内：动作标签（吸气/屏气/呼气） */
+.breath-action {
+  font-size: 34rpx;
+  font-weight: 400;
+  color: var(--color-on-surface);
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+/* 圆圈内：秒数 */
+.breath-count {
+  font-size: 56rpx;
+  font-weight: 200;
+  color: rgba(120, 110, 180, 0.85);
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
 .breath-count-unit {
   font-size: 22rpx;
   font-weight: 400;
-  color: var(--color-on-surface-variant);
+  color: rgba(120, 110, 180, 0.55);
   letter-spacing: 0.08em;
-  opacity: 0.6;
   line-height: 1;
-}
-
-.breath-instruction {
-  font-size: 40rpx;
-  font-weight: 500;
-  color: var(--color-on-surface);
-  letter-spacing: 0.05em;
 }
 
 .breath-round {
   font-size: 26rpx;
   color: var(--color-on-surface-variant);
+  margin-bottom: -20rpx;
+}
+
+.breath-round--hidden {
+  visibility: hidden;
+}
+
+/* 进度条：最大宽度 68% */
+.breath-progress-wrap {
+  width: 68%;
+}
+
+.breath-progress-wrap--hidden {
+  visibility: hidden;
 }
 
 .breath-progress {
@@ -185,54 +267,198 @@
   transition: width 1s linear, background 0.5s;
 }
 
-/* ===== 捏气泡游戏 ===== */
-.bubble-game {
+/* 控制按钮组 */
+.breath-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 20rpx;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8rpx;
+}
+
+.breath-ctrl-btn {
+  padding: 24rpx 68rpx;
+  border-radius: 9999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s, opacity 0.18s;
+}
+
+.breath-ctrl-btn:active { transform: scale(0.95); }
+
+.breath-ctrl-btn--primary {
+  background: rgba(49, 51, 47, 0.08);
+}
+
+
+.breath-ctrl-btn--secondary {
+  background: rgba(140, 148, 200, 0.25);
+}
+
+.breath-ctrl-btn--ghost {
+  background: rgba(49, 51, 47, 0.07);
+}
+
+.breath-ctrl-text {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: rgba(49, 51, 47, 0.65);
+  letter-spacing: 0.04em;
+}
+
+.breath-ctrl-text--secondary {
+  color: rgba(83, 91, 147, 0.9);
+}
+
+.breath-ctrl-text--ghost {
+  color: rgba(49, 51, 47, 0.45);
+}
+
+/* ===== 烦恼消消 ===== */
+.emoji-game {
   position: relative;
   z-index: 10;
   flex: 1;
+  overflow: hidden;
+}
+
+.emoji-back-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 16rpx);
+  right: 32rpx;
+  z-index: 200;
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-
-.bubble-game__field {
-  flex: 1;
-  position: relative;
+.emoji-back-icon {
+  font-size: 52rpx;
+  color: rgba(49, 51, 47, 0.45);
+  line-height: 1;
 }
 
-.game-bubble {
-  position: absolute;
-  border-radius: 9999rpx;
-  border: 1rpx solid rgba(255,255,255,0.4);
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.06), inset 0 2rpx 8rpx rgba(255,255,255,0.5);
-  animation: gameBubbleFloat ease-in-out infinite alternate;
-  transition: transform 0.1s;
-}
-
-.game-bubble:active { transform: scale(0.88) !important; }
-
-.game-bubble__shimmer {
+.emoji-field {
   position: absolute;
   inset: 0;
+  padding-bottom: max(calc(env(safe-area-inset-bottom) + 20rpx), 60rpx);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.emoji-item {
+  position: absolute;
+  /* top 由 JS 设为 finalY，初始通过 translateY 从屏幕顶部外开始掉落 */
+  line-height: 1;
+  user-select: none;
+  cursor: pointer;
+  transform-origin: center bottom;
+  animation-name: emojiFall;
+  /* 线性落下，无回弹 */
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+.emoji-item:active {
+  transform: scale(0.75) !important;
+}
+
+/* 从屏幕顶部外（-120vh）线性落下到位，无回弹 */
+@keyframes emojiFall {
+  0%   {
+    transform: translateY(-120vh) scale(0.7) rotate(-6deg);
+    opacity: 0;
+  }
+  40%  {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.emoji-item--pop {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.clear-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  z-index: 300;
+  background: rgba(49, 51, 47, 0.82);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border-radius: 32rpx;
+  padding: 32rpx 48rpx;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.clear-toast--visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.clear-toast__text {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ===== 清空烦恼 combo 计数 ===== */
+.bubble-combo-bar {
+  position: absolute;
+  top: 24rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8rpx;
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 9999rpx;
-  background: radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.55) 0%, transparent 55%);
+  padding: 10rpx 28rpx;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
-.game-bubble--pop {
-  animation: gameBubblePop 0.3s ease-out forwards !important;
+.bubble-combo-num {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(49, 51, 47, 0.65);
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
 
-.game-bubble--gone { display: none; }
-
-@keyframes gameBubbleFloat {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-24rpx); }
+.bubble-combo-label {
+  font-size: 22rpx;
+  font-weight: 400;
+  color: rgba(49, 51, 47, 0.45);
+  letter-spacing: 0.02em;
 }
 
-@keyframes gameBubblePop {
-  0%   { transform: scale(1);    opacity: 1; }
-  40%  { transform: scale(1.3);  opacity: 0.7; }
-  100% { transform: scale(0);    opacity: 0; }
+.bubble-combo-num--done {
+  font-size: 28rpx;
+  color: rgba(49, 51, 47, 0.65);
+}
+
+.bubble-combo-label--done {
+  font-size: 22rpx;
+  color: rgba(49, 51, 47, 0.45);
+  letter-spacing: 0.02em;
 }
 
 /* ===== 涂鸦游戏 ===== */
@@ -300,16 +526,6 @@
   color: var(--color-on-surface-variant);
 }
 
-/* 底部固定结束按钮栏 */
-.bottom-stop-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 20rpx 40rpx calc(env(safe-area-inset-bottom) + 20rpx);
-}
-
 .stop-btn {
   width: 100%;
   padding: 28rpx 0;
@@ -322,20 +538,35 @@
 }
 
 .stop-btn:active { transform: scale(0.97); }
-.stop-btn--inline { margin: 0; padding: 16rpx 32rpx; background: rgba(49, 51, 47, 0.75); }
+.stop-btn--inline { margin: 0; padding: 16rpx 32rpx; width: auto; background: rgba(49, 51, 47, 0.75); }
 .stop-btn__text { font-size: 30rpx; font-weight: 500; color: #fff; }
 
-/* 完成页底部面板（复用首页样式） */
+/* ===== 完成页背景内容（被面板遮住，仅占位） ===== */
+.done-screen {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  padding: 0 64rpx;
+}
+
+/* ===== 完成页底部面板 ===== */
 .bottom-action {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  height: 64vh;
   z-index: 120;
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 32rpx;
   padding: 36rpx 40rpx calc(env(safe-area-inset-bottom) + 40rpx);
+  box-sizing: border-box;
   background: rgba(251, 249, 245, 0.92);
   backdrop-filter: blur(40rpx);
   -webkit-backdrop-filter: blur(40rpx);
@@ -352,7 +583,59 @@
   pointer-events: auto;
 }
 
+/* 右上角关闭按钮 */
+.done-panel-close {
+  position: absolute;
+  top: 28rpx;
+  right: 32rpx;
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  color: rgba(49, 51, 47, 0.65);
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.done-panel-close:active {
+  color: rgba(49, 51, 47, 0.9);
+}
+
+/* 面板内居中完成内容 */
+.done-panel-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 32rpx 0 32rpx;
+}
+
+.done-panel-emoji {
+  font-size: 80rpx;
+  line-height: 1;
+}
+
+.done-panel-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.done-panel-body {
+  font-size: 26rpx;
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* 输入框 */
 .inline-input-wrap {
+  flex: 1;
+  min-height: 0;
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(24rpx);
   -webkit-backdrop-filter: blur(24rpx);
@@ -364,36 +647,19 @@
 }
 
 .inline-input {
+  flex: 1;
   width: 100%;
   font-size: 28rpx;
   color: var(--color-on-surface);
   line-height: 1.7;
   font-weight: 300;
   background: transparent;
-  min-height: 160rpx;
-  max-height: 320rpx;
 }
 
 .inline-placeholder {
   color: var(--color-outline-variant);
   font-style: italic;
   font-weight: 300;
-}
-
-/* 面板标题行 */
-.inline-panel-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 4rpx;
-}
-
-.inline-panel-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: var(--color-on-surface);
-  letter-spacing: -0.01em;
 }
 
 /* 双按钮行 */
@@ -433,44 +699,3 @@
 .panel-btn__text--secondary {
   color: var(--color-on-surface-variant);
 }
-
-/* ===== 完成页 ===== */
-.done-screen {
-  position: relative;
-  z-index: 10;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24rpx;
-  padding: 0 64rpx;
-}
-
-.done-emoji { font-size: 120rpx; }
-.done-title { font-size: 52rpx; font-weight: 600; color: var(--color-on-surface); letter-spacing: -0.02em; }
-.done-body { font-size: 28rpx; color: var(--color-on-surface-variant); text-align: center; line-height: 1.6; }
-
-.done-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-  width: 100%;
-  margin-top: 32rpx;
-}
-
-.done-btn {
-  width: 100%;
-  padding: 36rpx 0;
-  border-radius: 9999rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-}
-
-.done-btn:active { transform: scale(0.97); }
-.done-btn--primary { background: var(--color-primary); }
-.done-btn--ghost { background: var(--color-surface-container); }
-.done-btn__text { font-size: 32rpx; font-weight: 600; color: #fff; }
-.done-btn__text--ghost { color: var(--color-on-surface-variant); }

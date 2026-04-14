@@ -23,6 +23,9 @@ Page({
     inputText: '',
     autoFocus: false,
     showSavedToast: false,
+    statusBarHeight: 0,
+    menuBtnTop: 0,
+    menuBtnHeight: 32,
     // 情绪信息（从首页传入）
     emotionKey: '',
     emotionLabel: '',
@@ -32,6 +35,12 @@ Page({
   },
 
   onLoad(options) {
+    const app = getApp()
+    this.setData({
+      statusBarHeight: app.globalData.statusBarHeight || 0,
+      menuBtnTop: app.globalData.menuBtnTop || 0,
+      menuBtnHeight: app.globalData.menuBtnHeight || 32,
+    })
     this.setDateLabel()
     this.setRandomPrompt()
 

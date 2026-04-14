@@ -15,15 +15,16 @@
 .orb--a { top: -200rpx; right: -100rpx; width: 600rpx; height: 600rpx; background: rgba(218, 232, 190, 0.3); }
 .orb--b { bottom: -200rpx; left: -100rpx; width: 700rpx; height: 700rpx; background: rgba(250, 200, 200, 0.2); }
 
-/* 导航栏 */
+/* 导航栏（fixed，与胶囊同行） */
 .nav-bar {
-  position: relative;
-  z-index: 10;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 200;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 96rpx 40rpx 24rpx;
+  padding: 0 24rpx;
 }
 
 .back-btn {
@@ -32,17 +33,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-surface-container);
-  border-radius: 9999rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .back-icon { font-size: 36rpx; color: var(--color-on-surface); }
 
 .nav-title {
-  font-size: 36rpx;
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 32rpx;
   font-weight: 600;
   color: var(--color-on-surface);
   letter-spacing: -0.01em;
+  pointer-events: none;
 }
 
 .save-btn {

@@ -1,14 +1,17 @@
 <!-- Flomi Journal 记录页 -->
 <view class="page">
 
+  <!-- 状态栏占位 -->
+  <view style="height:{{statusBarHeight}}px;"></view>
+
   <!-- 背景 -->
   <view class="ambient-bg">
     <view class="orb orb--a"></view>
     <view class="orb orb--b"></view>
   </view>
 
-  <!-- 导航栏 -->
-  <view class="nav-bar">
+  <!-- 导航栏（与胶囊同行） -->
+  <view class="nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
     <view class="back-btn" bindtap="goBack">
       <text class="back-icon">←</text>
     </view>
