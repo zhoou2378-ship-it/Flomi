@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/history/history",
+    "pages/journal/journal",
+    "pages/game/game"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fbf9f5",
+    "navigationBarTitleText": "Flomi",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fbf9f5"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#31332f",
+    "selectedColor": "#A3B18A",
+    "backgroundColor": "#fbf9f5",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "历史"
+      }
+    ]
+  },
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

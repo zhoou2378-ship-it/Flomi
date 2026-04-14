@@ -1,0 +1,153 @@
+<!-- Flomi 首页 — 情绪气泡系统 -->
+<view class="page">
+
+  <!-- 动态液体背景 -->
+  <view class="ambient-bg">
+    <view class="orb orb--a" style="background:{{ambientColor}};"></view>
+    <view class="orb orb--b"></view>
+    <view class="orb orb--c" style="background:{{ambientColor}};"></view>
+    <view class="orb orb--d"></view>
+    <view class="orb orb--e" style="background:{{ambientColor}};"></view>
+  </view>
+
+  <!-- 顶部问候（气泡全部消失后隐藏） -->
+  <view class="greeting-bar {{showBottomAction ? 'greeting-bar--hidden' : ''}}">
+    <view class="greeting-inner">
+      <text class="greeting-time">{{timeGreeting}}</text>
+      <text class="greeting-question">今天感觉怎么样？</text>
+    </view>
+  </view>
+
+  <!-- 阶段一：选择情绪（首屏气泡） -->
+  <view class="bubble-stage" wx:if="{{stage === 'pick'}}">
+    <view class="stage-hint">
+      <text class="stage-hint__text">点击最符合你现在感受的词</text>
+    </view>
+    <view class="bubble-field">
+      <block wx:for="{{emotionBubbles}}" wx:key="id">
+        <view
+          class="bubble bubble--emotion {{item.popped ? 'bubble--gone' : ''}}"
+          style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.size}}rpx;height:{{item.size}}rpx;background:{{item.bg}};animation-name:{{item.animName}};animation-delay:{{item.delay}}s;animation-duration:{{item.dur}}s;"
+          bindtap="pickEmotion"
+          data-key="{{item.emotionKey}}"
+          data-id="{{item.id}}"
+        >
+          <view class="bubble-shimmer"></view>
+          <text class="bubble-emoji" style="font-size:{{item.emojiSize}}rpx;">{{item.emoji}}</text>
+          <text class="bubble-label" style="color:{{item.textColor}};font-size:{{item.labelSize}}rpx;">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 阶段二：展开关联词气泡 -->
+  <view class="bubble-stage" wx:if="{{stage === 'expand'}}">
+    <view class="bubble-field">
+      <block wx:for="{{wordBubbles}}" wx:key="id">
+        <view
+          class="bubble bubble--word {{item.popped ? 'bubble--gone' : ''}} {{item.popping ? 'bubble--popping' : ''}}"
+          style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.size}}rpx;height:{{item.size}}rpx;background:{{item.bg}};animation-name:{{item.animName}};animation-delay:{{item.delay}}s;animation-duration:{{item.dur}}s;"
+          bindtap="popWord"
+          data-id="{{item.id}}"
+        >
+          <view class="bubble-shimmer"></view>
+          <text class="bubble-word-text" style="color:{{item.textColor}};font-size:{{item.labelSize}}rpx;">{{item.word}}</text>
+          <text wx:if="{{item.count > 1}}" class="bubble-count">+{{item.count}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 底部操作区 — 内联记录/舒缓面板 -->
+  <view class="bottom-action {{showBottomAction ? 'bottom-action--visible' : ''}}">
+
+    <!-- 正向：输入框 -->
+    <view wx:if="{{selectedEmotion.direction === 'positive'}}">
+      <view class="inline-panel-header">
+        <text class="inline-panel-title">记录一下</text>
+        <text class="inline-panel-emotion" style="color:{{selectedEmotion.textColor}};background:{{selectedEmotion.bubbleColor}}">{{selectedEmotion.label}}</text>
+        <view class="panel-close-btn" bindtap="onClosePanelTap">✕</view>
+      </view>
+      <view class="inline-input-wrap">
+        <textarea
+          class="inline-input"
+          placeholder="{{inputPlaceholder}}"
+          placeholder-class="inline-placeholder"
+          value="{{journalText}}"
+          bindinput="onJournalInput"
+          auto-height
+          maxlength="500"
+          show-confirm-bar="{{false}}"
+          adjust-position="{{true}}"
+        ></textarea>
+      </view>
+    </view>
+
+    <!-- 负向：三个游戏选项卡 -->
+    <view wx:if="{{selectedEmotion.direction === 'negative'}}" class="game-cards-inline">
+      <view class="game-cards-inline__header">
+        <view class="game-cards-inline__header-text">
+          <text class="game-cards-inline__main">{{sootheMain}}</text>
+          <text class="game-cards-inline__sub">{{sootheSub}}</text>
+        </view>
+        <view class="panel-close-btn" bindtap="onClosePanelTap">✕</view>
+      </view>
+
+      <view class="game-card-inline" bindtap="startGameDirect" data-game="breath">
+        <view class="game-card-inline__icon game-card-inline__icon--breath">
+          <text class="game-card-inline__icon-text">◯</text>
+        </view>
+        <view class="game-card-inline__body">
+          <text class="game-card-inline__name">4-7-8 呼吸法</text>
+          <text class="game-card-inline__desc">跟随节奏，深呼吸放松神经</text>
+          <text class="game-card-inline__duration">约 2 分钟</text>
+        </view>
+      </view>
+
+      <view class="game-card-inline" bindtap="startGameDirect" data-game="bubble">
+        <view class="game-card-inline__icon game-card-inline__icon--bubble">
+          <text class="game-card-inline__icon-text">◎</text>
+        </view>
+        <view class="game-card-inline__body">
+          <text class="game-card-inline__name">捏气泡解压</text>
+          <text class="game-card-inline__desc">疯狂点击，把压力全部爆掉</text>
+          <text class="game-card-inline__duration">随时可停</text>
+        </view>
+      </view>
+
+      <view class="game-card-inline" bindtap="startGameDirect" data-game="doodle">
+        <view class="game-card-inline__icon game-card-inline__icon--doodle">
+          <text class="game-card-inline__icon-text">✦</text>
+        </view>
+        <view class="game-card-inline__body">
+          <text class="game-card-inline__name">随手涂鸦</text>
+          <text class="game-card-inline__desc">随意画，不需要任何目的</text>
+          <text class="game-card-inline__duration">随时可停</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 正向：按钮行 -->
+    <view wx:if="{{selectedEmotion.direction === 'positive'}}" class="panel-btn-row">
+      <button class="panel-btn panel-btn--secondary" bindtap="onSkipTap">
+        <text class="panel-btn__text panel-btn__text--secondary">下次吧</text>
+      </button>
+      <button class="panel-btn panel-btn--primary {{journalText.length === 0 ? 'panel-btn--disabled' : ''}}" bindtap="onActionTap">
+        <text class="panel-btn__text">写下来</text>
+      </button>
+    </view>
+
+  </view>
+
+  <!-- Combo 计数器 — 气泡点完后隐藏 -->
+  <view class="combo-wrap {{stage === 'expand' && poppedCount > 0 && !showBottomAction ? 'combo-wrap--visible' : ''}}">
+    <view class="combo-inner {{comboAnimate ? 'combo-inner--pop' : ''}}">
+      <text class="combo-num">{{poppedCount}}</text>
+      <text class="combo-label">combo</text>
+    </view>
+  </view>
+
+  <!-- TabBar -->
+  <tabbar selected="{{0}}"></tabbar>
+
+</view>

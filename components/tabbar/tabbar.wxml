@@ -1,0 +1,22 @@
+<!-- Flomi Custom TabBar — 2 Tabs -->
+<view class="tabbar-wrap">
+  <view class="tabbar-pill">
+
+    <!-- 首页 Tab -->
+    <view class="tab-item {{selected === 0 ? 'tab-item--active' : ''}}" bindtap="switchTab" data-index="0" data-path="/pages/home/home">
+      <view class="tab-icon-wrap {{selected === 0 ? 'tab-icon-wrap--active' : ''}}">
+        <text class="tab-icon tab-icon--home">◎</text>
+      </view>
+      <text class="tab-label {{selected === 0 ? 'tab-label--active' : ''}}">今天</text>
+    </view>
+
+    <!-- 历史记录 Tab -->
+    <view class="tab-item {{selected === 1 ? 'tab-item--active' : ''}}" bindtap="switchTab" data-index="1" data-path="/pages/history/history">
+      <view class="tab-icon-wrap {{selected === 1 ? 'tab-icon-wrap--active' : ''}}">
+        <text class="tab-icon tab-icon--history">≋</text>
+      </view>
+      <text class="tab-label {{selected === 1 ? 'tab-label--active' : ''}}">记录</text>
+    </view>
+
+  </view>
+</view>

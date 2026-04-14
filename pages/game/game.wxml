@@ -1,0 +1,157 @@
+<!-- Flomi 解压小游戏 — 呼吸练习 + 捏气泡 -->
+<view class="page">
+
+  <!-- 背景 -->
+  <view class="ambient-bg">
+    <view class="orb orb--a"></view>
+    <view class="orb orb--b"></view>
+  </view>
+
+
+  <!-- 游戏选择 -->
+  <view class="game-selector" wx:if="{{currentGame === 'menu'}}">
+    <text class="selector-title">选一个方式放松</text>
+    <view class="game-cards">
+
+      <!-- 呼吸练习 -->
+      <view class="game-card" bindtap="startGame" data-game="breath">
+        <view class="game-card__icon-wrap game-card__icon-wrap--breath">
+          <text class="game-card__icon">◯</text>
+        </view>
+        <text class="game-card__name">4-7-8 呼吸法</text>
+        <text class="game-card__desc">跟随节奏，深呼吸放松神经</text>
+        <text class="game-card__duration">约 2 分钟</text>
+      </view>
+
+      <!-- 捏气泡 -->
+      <view class="game-card" bindtap="startGame" data-game="bubble">
+        <view class="game-card__icon-wrap game-card__icon-wrap--bubble">
+          <text class="game-card__icon">◎</text>
+        </view>
+        <text class="game-card__name">捏气泡解压</text>
+        <text class="game-card__desc">疯狂点击，把压力全部爆掉</text>
+        <text class="game-card__duration">随时可停</text>
+      </view>
+
+      <!-- 涂鸦 -->
+      <view class="game-card" bindtap="startGame" data-game="doodle">
+        <view class="game-card__icon-wrap game-card__icon-wrap--doodle">
+          <text class="game-card__icon">✦</text>
+        </view>
+        <text class="game-card__name">随手涂鸦</text>
+        <text class="game-card__desc">随意画，不需要任何目的</text>
+        <text class="game-card__duration">随时可停</text>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- 游戏一：4-7-8 呼吸法 -->
+  <view class="breath-game" wx:if="{{currentGame === 'breath'}}">
+    <text class="breath-instruction">{{breathInstruction}}</text>
+    <view class="breath-circle-wrap">
+      <!-- 外圈脉冲 -->
+      <view class="breath-ring breath-ring--outer {{breathPhase}}"></view>
+      <view class="breath-ring breath-ring--mid {{breathPhase}}"></view>
+      <!-- 主圆 -->
+      <view class="breath-circle {{breathPhase}}">
+        <text class="breath-count">{{breathCount}}</text>
+        <text class="breath-count-unit">秒</text>
+      </view>
+    </view>
+    <text class="breath-round">第 {{breathRound}} / {{breathTotalRounds}} 轮</text>
+    <view class="breath-progress">
+      <view class="breath-progress__bar" style="width:{{breathProgress}}%;background:{{breathBarColor}};"></view>
+    </view>
+  </view>
+  <!-- 结束练习：底部固定按钮 -->
+  <view class="bottom-stop-bar" wx:if="{{currentGame === 'breath' || currentGame === 'bubble'}}">
+    <button class="stop-btn" bindtap="stopGame">
+      <text class="stop-btn__text">结束练习</text>
+    </button>
+  </view>
+
+  <!-- 游戏二：捏气泡 -->
+  <view class="bubble-game" wx:if="{{currentGame === 'bubble'}}">
+    <view class="bubble-game__field">
+      <block wx:for="{{gameBubbles}}" wx:key="id">
+        <view
+          class="game-bubble {{item.popping ? 'game-bubble--pop' : ''}} {{item.gone ? 'game-bubble--gone' : ''}}"
+          style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.size}}rpx;height:{{item.size}}rpx;background:{{item.color}};animation-delay:{{item.delay}}s;"
+          bindtap="popGameBubble"
+          data-id="{{item.id}}"
+        >
+          <view class="game-bubble__shimmer"></view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 游戏三：涂鸦 -->
+  <view class="doodle-game" wx:if="{{currentGame === 'doodle'}}">
+    <canvas
+      type="2d"
+      id="doodleCanvas"
+      class="doodle-canvas"
+      bindtouchstart="doodleStart"
+      bindtouchmove="doodleMove"
+      bindtouchend="doodleEnd"
+    ></canvas>
+    <view class="doodle-toolbar">
+      <view class="color-picker">
+        <block wx:for="{{doodleColors}}" wx:key="index">
+          <view
+            class="color-dot {{doodleColorIndex === index ? 'color-dot--active' : ''}}"
+            style="background:{{item}};"
+            bindtap="setDoodleColor"
+            data-index="{{index}}"
+          ></view>
+        </block>
+      </view>
+      <view class="doodle-actions">
+        <button class="doodle-clear-btn" bindtap="clearDoodle">
+          <text class="doodle-clear-btn__text">清空</text>
+        </button>
+        <button class="stop-btn stop-btn--inline" bindtap="stopGame">
+          <text class="stop-btn__text">完成</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成页 -->
+  <view class="done-screen" wx:if="{{currentGame === 'done'}}">
+    <text class="done-emoji">🌿</text>
+    <text class="done-title">感觉好一些了吗？</text>
+    <text class="done-body">记得，情绪没有对错。</text>
+  </view>
+
+  <!-- 完成页底部面板 -->
+  <view class="bottom-action {{currentGame === 'done' ? 'bottom-action--visible' : ''}}">
+    <view class="inline-panel-header">
+      <text class="inline-panel-title">写下来</text>
+    </view>
+    <view class="inline-input-wrap">
+      <textarea
+        class="inline-input"
+        placeholder="{{inputPlaceholder}}"
+        placeholder-class="inline-placeholder"
+        value="{{journalText}}"
+        bindinput="onJournalInput"
+        auto-height
+        maxlength="500"
+        show-confirm-bar="{{false}}"
+        adjust-position="{{true}}"
+      ></textarea>
+    </view>
+    <view class="panel-btn-row">
+      <button class="panel-btn panel-btn--secondary" bindtap="goBack">
+        <text class="panel-btn__text panel-btn__text--secondary">回首页</text>
+      </button>
+      <button class="panel-btn panel-btn--primary {{journalText.length === 0 ? 'panel-btn--disabled' : ''}}" bindtap="saveJournal">
+        <text class="panel-btn__text">写下来</text>
+      </button>
+    </view>
+  </view>
+
+</view>

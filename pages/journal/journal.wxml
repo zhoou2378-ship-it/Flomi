@@ -1,0 +1,59 @@
+<!-- Flomi Journal 记录页 -->
+<view class="page">
+
+  <!-- 背景 -->
+  <view class="ambient-bg">
+    <view class="orb orb--a"></view>
+    <view class="orb orb--b"></view>
+  </view>
+
+  <!-- 导航栏 -->
+  <view class="nav-bar">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">←</text>
+    </view>
+    <text class="nav-title">记录一下</text>
+    <view class="save-btn {{inputText.length > 0 ? 'save-btn--active' : ''}}" bindtap="saveEntry">
+      <text class="save-btn__text">保存</text>
+    </view>
+  </view>
+
+  <!-- 日期 + 情绪标签 -->
+  <view class="meta-row">
+    <text class="meta-date">{{dateLabel}}</text>
+    <view wx:if="{{emotionLabel}}" class="emotion-tag" style="background:{{emotionBg}};border-color:{{emotionBorder}};">
+      <text class="emotion-tag__text" style="color:{{emotionColor}};">{{emotionLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 今日提示语 -->
+  <view class="prompt-card">
+    <text class="prompt-label">今日提示</text>
+    <text class="prompt-text">{{currentPrompt}}</text>
+  </view>
+
+  <!-- 输入区 -->
+  <view class="input-wrap">
+    <textarea
+      class="journal-input"
+      placeholder="写下此刻的感受，不需要完美..."
+      placeholder-class="journal-placeholder"
+      value="{{inputText}}"
+      bindinput="onInput"
+      auto-height
+      maxlength="2000"
+      show-confirm-bar="{{false}}"
+      adjust-position="{{true}}"
+      focus="{{autoFocus}}"
+    ></textarea>
+    <view class="char-count" wx:if="{{inputText.length > 0}}">
+      <text class="char-count__text">{{inputText.length}} / 2000</text>
+    </view>
+  </view>
+
+  <!-- 保存成功提示 -->
+  <view class="saved-toast {{showSavedToast ? 'saved-toast--visible' : ''}}">
+    <text class="saved-toast__text">已保存 ✓</text>
+  </view>
+
+</view>

@@ -1,0 +1,74 @@
+<!-- 历史记录页 -->
+<view class="page-bg">
+
+  <!-- TabBar -->
+  <tabbar selected="{{1}}" id="tabbar"></tabbar>
+
+  <!-- 顶部周视图 -->
+  <view class="week-bar">
+    <view
+      wx:for="{{weekDays}}"
+      wx:key="date"
+      class="week-day {{item.date === selectedDate ? 'week-day--active' : ''}} {{item.hasRecord ? 'week-day--has' : ''}}"
+      bindtap="selectDay"
+      data-date="{{item.date}}"
+      data-label="{{item.isToday ? '今天' : item.dayLabel}}"
+    >
+      <text class="week-day__label">{{item.isToday ? '今' : item.dayLabel}}</text>
+      <text class="week-day__num">{{item.dayNum}}</text>
+      <view class="week-day__dot {{item.hasRecord ? 'week-day__dot--show' : ''}}"></view>
+    </view>
+  </view>
+
+  <!-- 内容区 -->
+  <scroll-view class="content-scroll {{switching ? 'content-scroll--switching' : ''}}" scroll-y>
+
+    <!-- 无记录 -->
+    <view wx:if="{{selectedGroups.length === 0}}" class="empty-wrap">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无记录</text>
+    </view>
+
+    <!-- 有记录 -->
+    <block wx:else>
+
+      <!-- 心情分析卡片 -->
+      <view wx:if="{{selectedAnalysis}}" class="analysis-card">
+        <view class="analysis-header">
+          <text class="analysis-title">心情分析</text>
+          <view class="analysis-badge" style="background:{{selectedAnalysis.topBg}};color:{{selectedAnalysis.topColor}}">
+            {{selectedAnalysis.topLabel}}
+          </view>
+        </view>
+        <text class="analysis-summary">{{selectedAnalysis.summary}}</text>
+      </view>
+
+      <!-- 心情记录卡片 -->
+      <view wx:for="{{selectedGroups}}" wx:key="date" class="chart-card">
+        <view class="chart-date-row">
+          <text class="chart-date-label">心情记录</text>
+          <text class="chart-count">{{item.records.length}} 条记录</text>
+        </view>
+
+        <!-- canvas 常驻 DOM，用 opacity 控制显隐避免闪烁；不足2条时折叠高度 -->
+        <canvas
+          type="2d"
+          id="chart-{{item.date}}"
+          class="chart-canvas {{item.showChart ? '' : 'chart-canvas--hidden'}}"
+          style="opacity:{{item.showChart && chartReady ? 1 : 0}}"
+        ></canvas>
+
+        <!-- 图例（始终显示，showChart 时跟随 chartReady 淡入） -->
+        <view class="chart-legend" style="opacity:{{item.showChart ? (chartReady ? 1 : 0) : 1}}">
+          <view wx:for="{{item.records}}" wx:key="id" wx:for-item="rec" class="legend-item">
+            <view class="legend-dot" style="background:{{rec.emotionDeepBg}}"></view>
+            <text class="legend-label">{{rec.emotionLabel}}</text>
+          </view>
+        </view>
+
+      </view>
+
+    </block>
+  </scroll-view>
+
+</view>

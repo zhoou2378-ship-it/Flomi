@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "tabbar": "/components/tabbar/tabbar"
+  },
+  "navigationBarHidden": true,
+  "disableScroll": true
+}

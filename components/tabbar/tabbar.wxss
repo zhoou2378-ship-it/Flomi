@@ -1,0 +1,87 @@
+/* ===== Flomi TabBar Component ===== */
+
+.tabbar-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.tabbar-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 12rpx 0 0;
+  padding-bottom: calc(12rpx + env(safe-area-inset-bottom));
+  background: rgba(251, 249, 245, 0.92);
+  backdrop-filter: blur(40rpx);
+  border-top: 1rpx solid rgba(178, 178, 173, 0.25);
+  width: 100%;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  flex: 1;
+  padding: 0;
+}
+
+.tab-icon-wrap {
+  width: 56rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999rpx;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tab-icon-wrap--active {
+  transform: scale(1.08);
+}
+
+.tab-icon {
+  font-size: 36rpx;
+  color: rgba(49, 51, 47, 0.3);
+  transition: color 0.25s;
+  line-height: 1;
+  display: block;
+}
+
+/* ◎ 字符视觉偏大，缩小 */
+.tab-icon--home {
+  font-size: 30rpx;
+}
+
+/* ≋ 字符视觉偏小，放大 */
+.tab-icon--history {
+  font-size: 42rpx;
+  position: relative;
+  top: -2rpx;
+}
+
+.tab-item--active .tab-icon {
+  color: #576342;
+}
+
+.tab-label {
+  font-size: 20rpx;
+  letter-spacing: 0.04em;
+  color: rgba(49, 51, 47, 0.35);
+  font-weight: 400;
+  transition: color 0.25s;
+}
+
+.tab-label--active {
+  color: #576342;
+  font-weight: 600;
+}

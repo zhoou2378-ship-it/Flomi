@@ -1,0 +1,63 @@
+<!-- Flomi Relief Page — Bubble Pop Space -->
+<view class="page-container">
+
+  <!-- Ambient Background Gradients -->
+  <view class="ambient-bg">
+    <view class="ambient-orb ambient-orb--tl"></view>
+    <view class="ambient-orb ambient-orb--br"></view>
+    <view class="ambient-gradient"></view>
+  </view>
+
+  <!-- Header -->
+  <view class="header fading-in-from-mist">
+    <view class="logo-row">
+      <text class="logo-icon">◉</text>
+      <text class="logo-text">Flomi</text>
+    </view>
+  </view>
+
+  <!-- Hero Text -->
+  <view class="hero-text fading-in-from-mist">
+    <text class="hero-title">Tap to release</text>
+    <text class="hero-subtitle">Let your thoughts float away with every pop</text>
+  </view>
+
+  <!-- Bubble Canvas — Full Screen Overlay -->
+  <view class="bubble-canvas">
+    <block wx:for="{{bubbles}}" wx:key="id">
+      <view class="bubble {{item.popped ? 'bubble--popped' : ''}} {{item.rippling ? 'bubble--ripple' : ''}}" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.size}}rpx;height:{{item.size}}rpx;background:{{item.bg}};animation-delay:{{item.delay}}s;animation-duration:{{item.floatDuration}}s;" bindtap="popBubble" data-id="{{item.id}}">
+        <view class="bubble-shimmer"></view>
+        <view class="bubble-highlight"></view>
+      </view>
+    </block>
+  </view>
+
+  <!-- Pop Counter -->
+  <view class="pop-counter fading-in-from-mist" wx:if="{{poppedCount > 0}}">
+    <text class="pop-counter__text">{{poppedCount}} released</text>
+  </view>
+
+  <!-- Done Button -->
+  <view class="done-wrap fading-in-from-mist">
+    <button class="done-btn {{allPopped ? 'done-btn--glow' : ''}}" bindtap="onFeelBetter">
+      <text class="done-btn__text">I feel better</text>
+    </button>
+  </view>
+
+  <!-- Celebration Overlay -->
+  <view class="celebration {{showCelebration ? 'celebration--visible' : ''}}" bindtap="dismissCelebration">
+    <view class="celebration-card">
+      <text class="celebration-emoji">🌿</text>
+      <text class="celebration-title">Well done</text>
+      <text class="celebration-body">You released {{poppedCount}} thought{{poppedCount > 1 ? 's' : ''}}.</text>
+      <text class="celebration-body celebration-body--sub">Take a deep breath.</text>
+      <view class="celebration-btn" bindtap="dismissCelebration">
+        <text class="celebration-btn__text">Continue</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- TabBar -->
+  <tabbar selected="{{1}}"></tabbar>
+
+</view>

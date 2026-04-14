@@ -1,0 +1,86 @@
+/* ===== Flomi Global Styles ===== */
+/* Design Token: Material You inspired, sage-green + dusty-rose palette */
+
+page {
+  --color-primary: #576342;
+  --color-primary-dim: #4b5737;
+  --color-primary-fixed: #dae8be;
+  --color-primary-fixed-dim: #cbdab0;
+  --color-primary-container: #dae8be;
+  --color-on-primary: #f0ffd3;
+  --color-on-primary-container: #4a5636;
+
+  --color-secondary: #7b5556;
+  --color-secondary-container: #ffdad9;
+  --color-secondary-fixed: #ffdad9;
+  --color-secondary-fixed-dim: #fac8c8;
+  --color-on-secondary: #fff7f6;
+  --color-on-secondary-container: #6d4849;
+
+  --color-tertiary: #535b93;
+  --color-tertiary-dim: #474f86;
+  --color-tertiary-container: #b8c0ff;
+  --color-tertiary-fixed: #b8c0ff;
+  --color-tertiary-fixed-dim: #aab2f0;
+  --color-on-tertiary: #faf8ff;
+  --color-on-tertiary-container: #323a70;
+
+  --color-background: #fbf9f5;
+  --color-surface: #fbf9f5;
+  --color-surface-dim: #dadad4;
+  --color-surface-bright: #fbf9f5;
+  --color-surface-container: #efeee9;
+  --color-surface-container-low: #f5f4ef;
+  --color-surface-container-high: #e9e8e3;
+  --color-surface-container-highest: #e3e3dc;
+  --color-surface-variant: #e3e3dc;
+  --color-on-surface: #31332f;
+  --color-on-surface-variant: #5e605b;
+  --color-outline: #7a7b76;
+  --color-outline-variant: #b2b2ad;
+
+  --color-brand: #A3B18A;
+
+  --radius-sm: 12rpx;
+  --radius-md: 24rpx;
+  --radius-lg: 40rpx;
+  --radius-xl: 60rpx;
+  --radius-full: 9999rpx;
+
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+}
+
+/* Reset */
+view, text, button, input, textarea {
+  box-sizing: border-box;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+button::after {
+  border: none;
+}
+
+/* Utility: fade-in from mist */
+.fading-in-from-mist {
+  animation: mistIn 1.2s ease-out forwards;
+}
+
+@keyframes mistIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
