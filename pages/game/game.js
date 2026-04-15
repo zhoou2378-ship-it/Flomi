@@ -1,7 +1,17 @@
 // Flomi 解压小游戏页
 // 包含：4-7-8呼吸法 / 烦恼消消 / 涂鸦
 
-const DOODLE_COLORS = ['#576342', '#535b93', '#7b5556', '#A3B18A', '#aab2f0', '#fac8c8', '#31332f']
+// 8色相环（每45°一色，柔和饱和度）
+const DOODLE_COLORS = [
+  '#E05252', // 0°   红
+  '#E09040', // 45°  橙
+  '#D4C84A', // 90°  黄
+  '#4AC46E', // 135° 绿
+  '#4AC4B0', // 180° 青
+  '#4A72E0', // 225° 蓝
+  '#7A4AE0', // 270° 紫
+  '#E04AB0', // 315° 玫红
+]
 
 // 呼吸阶段配置（4-7-8法）
 const BREATH_PHASES = [
@@ -18,7 +28,7 @@ const EMOJI_THEMES = [
   ['🌧️','⚡️','🪾','🌲','🍂','🌺','💦','🌊','☁️','🍃','🥀','🌸'],
 ]
 
-const MAX_EMOJI = 48
+const MAX_EMOJI = 36
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min
@@ -35,9 +45,13 @@ function pickEmoji(pool) {
 Page({
 data: {
 currentGame: 'breath',
+gameTitle: '呼吸放松',
 statusBarHeight: 0,
 menuBtnTop: 0,
 menuBtnHeight: 32,
+emotionLabel: '',
+clearDoneText: '',
+
 
     // 呼吸
     breathPhase: 'inhale',
@@ -53,11 +67,16 @@ menuBtnHeight: 32,
     // 清空烦恼
     emojiItems: [],
     showClearToast: false,
+    showClearDone: false,
     bubbleCombo: 0,
 
-    // 涂鸦
-    doodleColors: DOODLE_COLORS,
-    doodleColorIndex: 0,
+// 涂鸦
+doodleColors: DOODLE_COLORS,
+doodleColorIndex: 0,
+doodleHasContent: false,
+doodleCustomColor: '',
+doodleCanvasH: 0,
+
 
     // 完成页日记
     journalText: '',
@@ -79,10 +98,11 @@ menuBtnHeight: 32,
   onLoad(options) {
     const app = getApp()
     this.setData({
-  statusBarHeight: app.globalData.statusBarHeight || 0,
-  menuBtnTop: app.globalData.menuBtnTop || 0,
-  menuBtnHeight: app.globalData.menuBtnHeight || 32,
-})
+      statusBarHeight: app.globalData.statusBarHeight || 0,
+      menuBtnTop: app.globalData.menuBtnTop || 0,
+      menuBtnHeight: app.globalData.menuBtnHeight || 32,
+      emotionLabel: (options && options.emotionLabel) ? decodeURIComponent(options.emotionLabel) : '',
+    })
     const game = (options && (options.game || options.mode)) || 'breath'
     this._launchGame(game)
   },
@@ -113,14 +133,14 @@ menuBtnHeight: 32,
   },
 
   // 内部启动方法
-  _launchGame(game) {
-    const titleMap = {
-      breath: '4-7-8 呼吸法',
-      bubble: '清空烦恼',
-      doodle: '随手涂鸦',
-    }
-    wx.setNavigationBarTitle({ title: titleMap[game] || '放松一下' })
-    this.setData({ currentGame: game, showDonePanel: false })
+_launchGame(game) {
+const titleMap = {
+breath: '呼吸放松',
+bubble: '清空烦恼',
+doodle: '随手涂鸦',
+}
+const gameTitle = titleMap[game] || '放松一下'
+this.setData({ currentGame: game, showDonePanel: false, gameTitle })
     if (game === 'breath') {
       // 进入呼吸页，等用户点「开始」
       this.setData({ breathStatus: 'idle', breathCount: BREATH_PHASES[0].duration, breathInstruction: BREATH_PHASES[0].label, breathProgress: 0 })
@@ -246,9 +266,9 @@ menuBtnHeight: 32,
     const theme = EMOJI_THEMES[randInt(0, EMOJI_THEMES.length - 1)]
 
     // 每次随机数量：32 ~ 64，从该主题循环取用
-    const count = randInt(32, MAX_EMOJI)
+    const count = randInt(24, MAX_EMOJI)
 
-    this.setData({ emojiItems: [], showClearToast: false, bubbleCombo: 0 })
+    this.setData({ emojiItems: [], showClearToast: false, showClearDone: false, bubbleCombo: 0 })
 
     const items = []
     for (let i = 0; i < count; i++) {
@@ -294,38 +314,51 @@ menuBtnHeight: 32,
 
     const remaining = this.data.emojiItems.filter(b => !b.gone).length
     if (remaining === 0) {
-      this.setData({ showClearToast: true })
-      setTimeout(() => {
-        this.setData({ showClearToast: false })
-        setTimeout(() => this._initEmojiGame(), 400)
-      }, 2200)
+      const clearDoneText = `${this.data.emotionLabel}都帮你打包丢掉咯～`
+      this.setData({ showClearDone: true, clearDoneText })
     }
+  },
+
+  restartBubbleGame() {
+    this.setData({ showClearDone: false })
+    setTimeout(() => this._initEmojiGame(), 300)
   },
 
   // ===== 涂鸦游戏 =====
 
   initDoodle() {
-    const query = wx.createSelectorQuery()
-    query.select('#doodleCanvas')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        if (!res || !res[0]) return
-        const canvas = res[0].node
-        const ctx = canvas.getContext('2d')
-        const dpr = wx.getWindowInfo().pixelRatio || 2
-        canvas.width = res[0].width * dpr
-        canvas.height = res[0].height * dpr
-        ctx.scale(dpr, dpr)
-        ctx.lineCap = 'round'
-        ctx.lineJoin = 'round'
-        ctx.lineWidth = 4
-        ctx.strokeStyle = DOODLE_COLORS[0]
-        this._doodleCtx = ctx
-        this._doodleCanvas = canvas
-        this._doodleDpr = dpr
-        this._doodleW = res[0].width
-        this._doodleH = res[0].height
+    // 先查 wrap 尺寸，再初始化 canvas
+    const wrapQuery = wx.createSelectorQuery()
+    wrapQuery.select('.doodle-canvas-wrap')
+      .boundingClientRect((rect) => {
+        if (!rect) return
+        const wrapH = rect.height
+        const wrapW = rect.width
+        this.setData({ doodleCanvasH: wrapH }, () => {
+          const query = wx.createSelectorQuery()
+          query.select('#doodleCanvas')
+            .fields({ node: true, size: true })
+            .exec((res) => {
+              if (!res || !res[0]) return
+              const canvas = res[0].node
+              const ctx = canvas.getContext('2d')
+              const dpr = wx.getWindowInfo().pixelRatio || 2
+              canvas.width = wrapW * dpr
+              canvas.height = wrapH * dpr
+              ctx.scale(dpr, dpr)
+              ctx.lineCap = 'round'
+              ctx.lineJoin = 'round'
+              ctx.lineWidth = 4
+              ctx.strokeStyle = DOODLE_COLORS[0]
+              this._doodleCtx = ctx
+              this._doodleCanvas = canvas
+              this._doodleDpr = dpr
+              this._doodleW = wrapW
+              this._doodleH = wrapH
+            })
+        })
       })
+      .exec()
   },
 
   setDoodleColor(e) {
@@ -344,6 +377,9 @@ menuBtnHeight: 32,
     this._doodleLastY = touch.y
     this._doodleCtx.beginPath()
     this._doodleCtx.moveTo(touch.x, touch.y)
+    if (!this.data.doodleHasContent) {
+      this.setData({ doodleHasContent: true })
+    }
   },
 
   doodleMove(e) {
@@ -360,8 +396,17 @@ menuBtnHeight: 32,
   },
 
   clearDoodle() {
-    if (!this._doodleCtx) return
-    this._doodleCtx.clearRect(0, 0, this._doodleW, this._doodleH)
+    if (!this._doodleCtx || !this._doodleCanvas) return
+    this._doodleCtx.clearRect(0, 0, this._doodleCanvas.width, this._doodleCanvas.height)
+    this.setData({ doodleHasContent: false })
+  },
+
+  onDoodleColorPickerChange(e) {
+    const color = e.detail.value
+    this.setData({ doodleCustomColor: color, doodleColorIndex: -1 })
+    if (this._doodleCtx) {
+      this._doodleCtx.strokeStyle = color
+    }
   },
 
   stopGame() {

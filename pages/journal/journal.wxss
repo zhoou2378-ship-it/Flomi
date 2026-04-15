@@ -39,7 +39,7 @@
   -webkit-backdrop-filter: blur(20px);
 }
 
-.back-icon { font-size: 36rpx; color: var(--color-on-surface); }
+.back-icon { width: 40rpx; height: 40rpx; }
 
 .nav-title {
   position: absolute;
@@ -148,16 +148,18 @@
   font-size: 32rpx;
   color: var(--color-on-surface);
   line-height: 1.9;
-  font-weight: 300;
+  font-weight: 400;
   background: transparent;
   border: none;
   padding: 0;
+  text-align: center;
 }
 
 .journal-placeholder {
   color: var(--color-outline-variant);
-  font-weight: 300;
-  font-style: italic;
+  font-weight: 400;
+  font-style: normal;
+  text-align: center;
 }
 
 .char-count {

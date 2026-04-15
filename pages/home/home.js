@@ -358,7 +358,8 @@ Page({
 
   startGameDirect(e) {
     const game = e.currentTarget.dataset.game
-    wx.navigateTo({ url: `/pages/game/game?game=${game}` })
+    const emotionLabel = (this.data.selectedEmotion && this.data.selectedEmotion.label) || ''
+    wx.navigateTo({ url: `/pages/game/game?game=${game}&emotionLabel=${encodeURIComponent(emotionLabel)}` })
   },
 
   // ===== 内联记录 =====

@@ -7,9 +7,9 @@
   <!-- 导航栏：返回按钮 + 页面标题 -->
   <view class="game-nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
     <view class="game-back-btn" bindtap="goBack">
-      <text class="game-back-icon">‹</text>
+      <image class="game-back-icon" src="/assets/icons/back.svg" mode="aspectFit"></image>
     </view>
-    <text class="game-nav-title">放松一下</text>
+    <text class="game-nav-title">{{gameTitle}}</text>
   </view>
 
   <!-- 背景 -->
@@ -18,7 +18,7 @@
     <view class="orb orb--b"></view>
   </view>
 
-  <!-- 游戏一：4-7-8 呼吸法 -->
+  <!-- 游戏一：呼吸放松 -->
   <view class="breath-game" wx:if="{{currentGame === 'breath'}}">
 
     <!-- 圆圈动画区 -->
@@ -47,31 +47,21 @@
       </view>
     </view>
 
-    <!-- 控制按钮组（running / paused 时显示） -->
-    <view class="breath-controls" wx:if="{{breathStatus !== 'idle'}}">
+    <!-- 控制按钮组（始终占位，idle 时不可见） -->
+    <view class="breath-controls {{breathStatus === 'idle' ? 'breath-controls--hidden' : ''}}">
       <!-- 结束 -->
       <view
-        wx:if="{{breathStatus !== 'idle'}}"
         class="breath-ctrl-btn breath-ctrl-btn--ghost"
         bindtap="breathStop"
       >
         <text class="breath-ctrl-text breath-ctrl-text--ghost">结束</text>
       </view>
-      <!-- 继续 -->
+      <!-- 继续 / 暂停 -->
       <view
-        wx:if="{{breathStatus === 'paused'}}"
-        class="breath-ctrl-btn breath-ctrl-btn--primary"
-        bindtap="breathStart"
+        class="breath-ctrl-btn {{breathStatus === 'paused' ? 'breath-ctrl-btn--primary' : 'breath-ctrl-btn--secondary'}}"
+        bindtap="{{breathStatus === 'paused' ? 'breathStart' : 'breathPause'}}"
       >
-        <text class="breath-ctrl-text">继续</text>
-      </view>
-      <!-- 暂停 -->
-      <view
-        wx:if="{{breathStatus === 'running'}}"
-        class="breath-ctrl-btn breath-ctrl-btn--secondary"
-        bindtap="breathPause"
-      >
-        <text class="breath-ctrl-text breath-ctrl-text--secondary">暂停</text>
+        <text class="breath-ctrl-text {{breathStatus === 'paused' ? '' : 'breath-ctrl-text--secondary'}}">{{breathStatus === 'paused' ? '继续' : '暂停'}}</text>
       </view>
     </view>
 
@@ -79,17 +69,13 @@
 
   <!-- 游戏二：清空烦恼 -->
   <view class="emoji-game" wx:if="{{currentGame === 'bubble'}}">
-    <!-- combo 计数 / 完成 toast，显示在页面中间 -->
-    <view class="bubble-combo-bar">
-      <block wx:if="{{!showClearToast}}">
-        <text class="bubble-combo-num">{{bubbleCombo}}</text>
-        <text class="bubble-combo-label">已消除</text>
-      </block>
-      <block wx:else>
-        <text class="bubble-combo-num bubble-combo-num--done">🎉</text>
-        <text class="bubble-combo-label bubble-combo-label--done">坏心情都帮你打包丢掉咯～</text>
-      </block>
+    <!-- combo 计数（顶部） -->
+    <view class="bubble-combo-bar" wx:if="{{!showClearDone}}">
+      <text class="bubble-combo-num">{{bubbleCombo}}</text>
+      <text class="bubble-combo-label">已消除</text>
     </view>
+
+    <!-- emoji 场 -->
     <view class="emoji-field">
       <block wx:for="{{emojiItems}}" wx:key="id">
         <view
@@ -101,18 +87,40 @@
         >{{item.emoji}}</view>
       </block>
     </view>
+
+    <!-- 清空完成：页面中间提示 -->
+    <view class="bubble-clear-done {{showClearDone ? 'bubble-clear-done--visible' : ''}}">
+      <text class="bubble-clear-done__title">{{clearDoneText}}</text>
+      <view class="bubble-clear-done__btn" bindtap="restartBubbleGame">
+        <text class="bubble-clear-done__btn-text">再来一次</text>
+      </view>
+    </view>
   </view>
 
   <!-- 游戏三：涂鸦 -->
   <view class="doodle-game" wx:if="{{currentGame === 'doodle'}}">
-    <canvas
-      type="2d"
-      id="doodleCanvas"
-      class="doodle-canvas"
-      bindtouchstart="doodleStart"
-      bindtouchmove="doodleMove"
-      bindtouchend="doodleEnd"
-    ></canvas>
+    <!-- 画布 -->
+    <view class="doodle-canvas-wrap">
+      <canvas
+        type="2d"
+        id="doodleCanvas"
+        class="doodle-canvas"
+        style="width:100%;height:{{doodleCanvasH}}px;"
+        bindtouchstart="doodleStart"
+        bindtouchmove="doodleMove"
+        bindtouchend="doodleEnd"
+      ></canvas>
+      <!-- 清空按钮：画布有内容时显示在中央 -->
+      <view
+        wx:if="{{doodleHasContent}}"
+        class="doodle-clear-overlay"
+        bindtap="clearDoodle"
+      >
+        <text class="doodle-clear-overlay__text">清空</text>
+      </view>
+    </view>
+
+    <!-- 颜色工具栏 -->
     <view class="doodle-toolbar">
       <view class="color-picker">
         <block wx:for="{{doodleColors}}" wx:key="index">
@@ -123,14 +131,19 @@
             data-index="{{index}}"
           ></view>
         </block>
-      </view>
-      <view class="doodle-actions">
-        <button class="doodle-clear-btn" bindtap="clearDoodle">
-          <text class="doodle-clear-btn__text">清空</text>
-        </button>
-        <button class="stop-btn stop-btn--inline" bindtap="stopGame">
-          <text class="stop-btn__text">完成</text>
-        </button>
+        <!-- 色相环自定义颜色 -->
+        <view class="doodle-toolbar-divider"></view>
+        <view class="doodle-color-wheel {{doodleColorIndex === -1 ? 'doodle-color-wheel--active' : ''}}" style="{{doodleCustomColor ? 'background:' + doodleCustomColor + ';' : ''}}">
+          <picker
+            mode="color"
+            value="{{doodleCustomColor || '#E05252'}}"
+            bindchange="onDoodleColorPickerChange"
+          >
+            <view class="doodle-color-wheel__inner">
+              <text style="{{doodleColorIndex === -1 ? 'color:#fff;' : ''}}">+</text>
+            </view>
+          </picker>
+        </view>
       </view>
     </view>
   </view>

@@ -136,7 +136,8 @@
 
 .analysis-summary {
   font-size: 26rpx;
-  color: #888;
+  font-weight: 400;
+  color: rgba(49, 51, 47, 0.38);
   line-height: 1.8;
   display: block;
   margin-bottom: 20rpx;
@@ -181,7 +182,7 @@
 .action-card__icon-wrap--breath { background: rgba(184,192,255,0.5); }
 .action-card__icon-wrap--bubble { background: rgba(218,232,190,0.6); }
 .action-card__icon-wrap--doodle { background: rgba(255,218,150,0.5); }
-.action-card__icon-wrap--text   { background: rgba(200,200,195,0.4); }
+.action-card__icon-wrap--text   { background: rgba(179,214,240,0.55); }
 
 /* text 类型 emoji 字号 */
 .action-card__icon-text {
@@ -189,52 +190,14 @@
   line-height: 1;
 }
 
-/* ── 纯 CSS 图标 ── */
-/* breath: 空心圆 */
-.action-icon--breath {
-  width: 36rpx;
-  height: 36rpx;
-  border-radius: 50%;
-  border: 4rpx solid rgba(83,91,147,0.7);
-  box-sizing: border-box;
+/* 文字符号图标（与首页面板一致） */
+.action-card__icon-symbol {
+  font-size: 40rpx;
+  line-height: 1;
 }
-
-/* bubble: 外圆 + 内圆（同心圆环） */
-.action-icon--bubble {
-  width: 36rpx;
-  height: 36rpx;
-  border-radius: 50%;
-  border: 4rpx solid rgba(87,99,66,0.6);
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.action-icon--bubble-inner {
-  width: 14rpx;
-  height: 14rpx;
-  border-radius: 50%;
-  border: 3rpx solid rgba(87,99,66,0.6);
-  box-sizing: border-box;
-}
-
-/* doodle: 用 box-shadow 模拟四角星（旋转的正方形叠加） */
-.action-icon--doodle {
-  width: 24rpx;
-  height: 24rpx;
-  background: rgba(160,120,40,0.7);
-  transform: rotate(45deg);
-  border-radius: 3rpx;
-  position: relative;
-}
-.action-icon--doodle::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(160,120,40,0.7);
-  transform: rotate(45deg);
-  border-radius: 3rpx;
-}
+.action-card__icon-symbol--breath { color: #5C6BC0; }
+.action-card__icon-symbol--bubble { font-size: 46rpx; color: #6A8F3D; }
+.action-card__icon-symbol--doodle { color: #B07D2A; }
 
 .action-card__text {
   display: flex;

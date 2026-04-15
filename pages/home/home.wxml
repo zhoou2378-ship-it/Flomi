@@ -23,6 +23,7 @@
     <view class="greeting-inner">
       <text class="greeting-time">{{timeGreeting}}</text>
       <text class="greeting-question">现在感觉怎么样？</text>
+      <text class="greeting-hint">点击对应心情就可以记录哦～</text>
     </view>
   </view>
 
@@ -107,7 +108,7 @@
         <view class="game-card-inline__icon game-card-inline__icon--breath">
           <text class="game-card-inline__icon-text">◯</text>
         </view>
-        <text class="game-card-inline__name">4-7-8 呼吸法</text>
+        <text class="game-card-inline__name">呼吸放松</text>
         <text class="game-card-inline__desc">跟随节奏，深呼吸放松神经 · 约 2 分钟</text>
       </view>
 

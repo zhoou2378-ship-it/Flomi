@@ -100,13 +100,13 @@ function buildAnalysis(records) {
     { icon: '🎵', label: '听首喜欢的歌', desc: '延续这份愉悦', type: 'text' },
   ]
   const negativeActions = [
-    { icon: '◯', label: '4-7-8 呼吸法', desc: '跟随节奏，深呼吸放松神经', type: 'game', game: 'breath' },
+    { icon: '◯', label: '呼吸放松', desc: '跟随节奏，深呼吸放松神经', type: 'game', game: 'breath' },
     { icon: '◎', label: '清空烦恼', desc: '点击消除，把烦恼全部清空', type: 'game', game: 'bubble' },
     { icon: '✦', label: '随手涂鸦', desc: '随意画，不需要任何目的', type: 'game', game: 'doodle' },
     { icon: '💧', label: '喝口水', desc: '给自己几分钟安静', type: 'text' },
   ]
   const mixedActions = [
-    { icon: '◯', label: '4-7-8 呼吸法', desc: '整理一下思绪', type: 'game', game: 'breath' },
+    { icon: '◯', label: '呼吸放松', desc: '整理一下思绪', type: 'game', game: 'breath' },
     { icon: '✦', label: '随手涂鸦', desc: '给情绪一个出口', type: 'game', game: 'doodle' },
     { icon: '◎', label: '清空烦恼', desc: '点击消除，换个心情', type: 'game', game: 'bubble' },
     { icon: '🌿', label: '深呼吸几次', desc: '感受当下，慢慢来', type: 'text' },

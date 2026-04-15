@@ -13,7 +13,7 @@
   <!-- 导航栏（与胶囊同行） -->
   <view class="nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
     <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">←</text>
+      <image class="back-icon" src="/assets/icons/back.svg" mode="aspectFit"></image>
     </view>
     <text class="nav-title">记录一下</text>
     <view class="save-btn {{inputText.length > 0 ? 'save-btn--active' : ''}}" bindtap="saveEntry">

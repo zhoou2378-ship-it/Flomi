@@ -6,7 +6,7 @@
 
   <!-- 导航栏标题（与胶囊同行） -->
   <view class="history-nav-bar" style="top:{{menuBtnTop}}px;height:{{menuBtnHeight}}px;">
-    <text class="history-nav-title">心情记录</text>
+    <text class="history-nav-title">记录</text>
   </view>
 
   <!-- TabBar -->
@@ -85,18 +85,12 @@
         data-type="{{selectedAnalysis.action.type}}"
         data-game="{{selectedAnalysis.action.game}}"
       >
-        <view class="action-card__icon-wrap action-card__icon-wrap--{{selectedAnalysis.action.game || 'text'}}">
-          <!-- breath: 空心圆 -->
-          <view wx:if="{{selectedAnalysis.action.game === 'breath'}}" class="action-icon action-icon--breath"></view>
-          <!-- bubble: 双圆环 -->
-          <view wx:elif="{{selectedAnalysis.action.game === 'bubble'}}" class="action-icon action-icon--bubble">
-            <view class="action-icon--bubble-inner"></view>
-          </view>
-          <!-- doodle: 四角星 -->
-          <view wx:elif="{{selectedAnalysis.action.game === 'doodle'}}" class="action-icon action-icon--doodle"></view>
-          <!-- text: emoji 直接显示 -->
-          <text wx:else class="action-card__icon-text">{{selectedAnalysis.action.icon}}</text>
-        </view>
+<view class="action-card__icon-wrap action-card__icon-wrap--{{selectedAnalysis.action.game || 'text'}}">
+<text wx:if="{{selectedAnalysis.action.game === 'breath'}}" class="action-card__icon-symbol action-card__icon-symbol--breath">◯</text>
+<text wx:elif="{{selectedAnalysis.action.game === 'bubble'}}" class="action-card__icon-symbol action-card__icon-symbol--bubble">◎</text>
+<text wx:elif="{{selectedAnalysis.action.game === 'doodle'}}" class="action-card__icon-symbol action-card__icon-symbol--doodle">✦</text>
+<text wx:else class="action-card__icon-text">{{selectedAnalysis.action.icon}}</text>
+</view>
         <view class="action-card__text">
           <text class="action-card__label">{{selectedAnalysis.action.label}}</text>
           <text class="action-card__desc">{{selectedAnalysis.action.desc}}</text>
